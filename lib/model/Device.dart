@@ -24,6 +24,6 @@ class Device {
 
 List<Device> data =[
   Device(nameDeivce: "Router 1", ip: "192.168.1.39", status: true),
-  Device(nameDeivce: "Router 2", ip: "google.com", status: true),
+  Device(nameDeivce: "Router 2", ip: "google.com", status: false),
   Device(nameDeivce: "Router 3", ip: "youtube.com", status: false),
 ];

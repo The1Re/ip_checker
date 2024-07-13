@@ -15,29 +15,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool selected = false;
 
-  Text status(int index) {
-    if (data[index].status) {
-      return Text(
-        "online",
-        style: TextStyle(fontSize: 20, color: Colors.grey),
-      );
-    } else {
-      return Text(
-        "offline",
-        style: TextStyle(fontSize: 20, color: Colors.grey),
-      );
-    }
-  }
-
   void PingCheck(int index){
+    bool In = false;
     setState(() {
       final ping = Ping(data[index].ip,count: 5);
       ping.stream.listen((event) {
         print(event);
-        if(event.error != null){
+        if(event.error != null && In == false){
           data[index].setColorstatus(Color.fromRGBO(206, 68, 68, 100));
-        }else{
+          data[index].setStatus(false);
+          In = true;
+        }else if(event.error == null && In == false){
           data[index].setColorstatus(Color.fromRGBO(64, 230, 171, 100));
+          data[index].setStatus(true);
+          In = true;
         }
       }
     );});
@@ -189,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              status(index),
+                              Text(data[index].status ? "online" : "offline" ,style: TextStyle(fontSize: 20, color: Colors.grey),),
                               Visibility(
                                   visible: selected ? false : true,
                                   child: AnimatedOpacity(
