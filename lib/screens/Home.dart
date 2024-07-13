@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
         ),
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => Adddvice()));
+              .pushReplacement(MaterialPageRoute(builder: (context) => Adddvice()));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
