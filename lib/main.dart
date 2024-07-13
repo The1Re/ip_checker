@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:ip_checker/screen/HomePage.dart';
+import 'dart:convert';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:dart_ping/dart_ping.dart';
+import 'package:ip_checker/screens/Home.dart';
+
+
+void main() async{
   runApp(const MyApp());
 }
 
@@ -10,9 +14,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return const MaterialApp(
       home: HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
