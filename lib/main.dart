@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:dart_ping/dart_ping.dart';
 import 'package:ip_checker/screens/Home.dart';
 
 

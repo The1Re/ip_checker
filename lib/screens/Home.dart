@@ -1,7 +1,5 @@
-import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ip_checker/model/Device.dart';
 import 'package:ip_checker/screens/addDvice.dart';
 import 'package:ip_checker/widget/card.dart';
 
