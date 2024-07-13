@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ip_checker/model/Device.dart';
 import 'package:ip_checker/screens/addDvice.dart';
-
+import 'package:ip_checker/widget/card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,26 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool selected = false;
-
-  void PingCheck(int index){
-    bool In = false;
-    setState(() {
-      final ping = Ping(data[index].ip,count: 5);
-      ping.stream.listen((event) {
-        print(event);
-        if(event.error != null && In == false){
-          data[index].setColorstatus(Color.fromRGBO(206, 68, 68, 100));
-          data[index].setStatus(false);
-          In = true;
-        }else if(event.error == null && In == false){
-          data[index].setColorstatus(Color.fromRGBO(64, 230, 171, 100));
-          data[index].setStatus(true);
-          In = true;
-        }
-      }
-    );});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,105 +94,8 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               margin: EdgeInsetsDirectional.only(top: 20),
-              height: 690,
-              child: ListView.builder(
-                itemCount: data.length,
-                scrollDirection: Axis.vertical,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selected = !selected;
-                      });
-                    },
-                    child: AnimatedContainer(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: data[index].colorStatus,
-                                blurRadius: 7,
-                                offset: Offset(0, 0))
-                          ]),
-                      height: selected ? 100 : 190,
-                      padding: const EdgeInsets.only(left: 10, top: 10),
-                      margin: const EdgeInsets.only(
-                          bottom: 20, top: 20, left: 4, right: 4),
-                      duration: const Duration(milliseconds: 200),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 5, left: 5),
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                    color: data[index].colorStatus,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20))),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 0, right: 140),
-                                child: Text(
-                                  data[index].nameDeivce,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Text(data[index].ip,
-                                  style: TextStyle(
-                                      fontSize: 20, color: Colors.grey)),
-                            ],
-                          ),
-                          Container(
-                              child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(data[index].status ? "online" : "offline" ,style: TextStyle(fontSize: 20, color: Colors.grey),),
-                              Visibility(
-                                  visible: selected ? false : true,
-                                  child: AnimatedOpacity(
-                                    opacity: selected ? 0.0 : 1.0,
-                                    duration: const Duration(milliseconds: 0),
-                                    child: FilledButton(
-                                      style: ButtonStyle(
-                                          shape: WidgetStatePropertyAll(
-                                              CircleBorder()),
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  Color.fromRGBO(
-                                                      206, 68, 68, 100))),
-                                      onPressed: () {
-                                        PingCheck(index);
-                                      },
-                                      child: Text(
-                                        "X",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                  ))
-                            ],
-                          )),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+              height: 600,
+              child: deviceCard()
             ),
           ],
         ),
@@ -234,5 +117,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
