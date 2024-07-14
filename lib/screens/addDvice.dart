@@ -11,10 +11,9 @@ class Adddvice extends StatefulWidget {
 }
 
 class _AdddviceState extends State<Adddvice> {
-  textField nameDevice = textField(widthField: 340);
-  textField ipAddress = textField(widthField: 220);
-  textField port = textField(widthField: 90);
-
+  textField nameDevice = textField(widthField: 0.95);
+  textField ipAddress = textField(widthField: 0.6);
+  textField port = textField(widthField: 0.26);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

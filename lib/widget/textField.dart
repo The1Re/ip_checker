@@ -40,7 +40,7 @@ class _textFieldState extends State<textField> {
             padding: EdgeInsets.symmetric(
               horizontal: 16,
             ),
-            width: widget.widthField,
+            width: MediaQuery.of(context).size.width*widget.widthField,
             height: 43,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +92,8 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               margin: EdgeInsetsDirectional.only(top: 20),
-              height: 490,
+              
+              height: MediaQuery.of(context).size.height*0.65,
               child: deviceCard()
             ),
           ],
