@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ip_checker/model/Device.dart';
 import 'package:ip_checker/screens/Home.dart';
 import 'package:ip_checker/widget/textField.dart';
 
@@ -10,6 +11,10 @@ class Adddvice extends StatefulWidget {
 }
 
 class _AdddviceState extends State<Adddvice> {
+  textField nameDevice = textField(widthField: 350);
+  textField ipAddress = textField(widthField: 240);
+  textField port = textField(widthField: 90);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +62,7 @@ class _AdddviceState extends State<Adddvice> {
                             color: Color.fromRGBO(37, 37, 37, 0.612)),
                       ),
                     ),
-                    textField(widthField: 350.0)
+                    nameDevice,
                   ],
                 ),
                 //ip address , Port
@@ -80,7 +85,7 @@ class _AdddviceState extends State<Adddvice> {
                                     fontSize: 15,
                                     color: Color.fromRGBO(37, 37, 37, 0.612)),
                               ),
-                              textField(widthField: 240.0)
+                              ipAddress,
                             ],
                           ),
                         ),
@@ -98,7 +103,7 @@ class _AdddviceState extends State<Adddvice> {
                                     fontSize: 15,
                                     color: Color.fromRGBO(37, 37, 37, 0.612)),
                               ),
-                              textField(widthField: 90.0)
+                              port,
                             ],
                           ),
                         ),
@@ -110,44 +115,84 @@ class _AdddviceState extends State<Adddvice> {
             ),
           ),
           //Button Add & Close
-          Container(
-              height: 570,
+          Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                          width: 110,
-                          child: FilledButton(
-                            style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color.fromRGBO(159, 173, 192, 100))),
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()));
-                            },
-                            child: Text(
-                              "CANCEL",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )),
-                      SizedBox(
-                        width: 100,
-                      ),
-                      Container(
-                          width: 110,
-                          child: FilledButton(
-                            style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color.fromRGBO(101, 138, 190, 0.644))),
-                            onPressed: () {},
-                            child: Text("ADD",
-                                style: TextStyle(color: Colors.white)),
-                          )),
-                    ],
-                  )
-                ],
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        width: 110,
+                        child: FilledButton(
+                          style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                  Color.fromRGBO(159, 173, 192, 100))),
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage()));
+                          },
+                          child: Text(
+                            "CANCEL",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )),
+                    SizedBox(
+                      width: 100,
+                    ),
+                    Container(
+                        width: 110,
+                        child: FilledButton(
+                          style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                  Color.fromRGBO(101, 138, 190, 0.644))),
+                          onPressed: () {
+                            setState(() {
+                              if (nameDevice.myController.text != "" &&
+                                  ipAddress.myController.text != "") {
+                                Device _addDevice = Device(
+                                    nameDeivce: nameDevice.myController.text,
+                                    ip: ipAddress.myController.text);
+                                deviceList.add(_addDevice);
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => HomePage()));
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Text(
+                                        "Please provide all the necessary details.",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              "OK",
+                                              style: TextStyle(fontSize: 15),
+                                            ))
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            });
+                          },
+                          child: Text("ADD",
+                              style: TextStyle(color: Colors.white)),
+                        )),
+                  ],
+                ),
               )
-            )
+            ],
+          ))
         ],
       ),
     );

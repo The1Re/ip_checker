@@ -11,28 +11,27 @@ class Device {
   Color colorStatus = Colors.grey;
   bool selected = false;
 
-  void setStatus(bool s) {
-    status = s;
+  void setStatus(bool status) {
+    this.status = status;
   }
 
-  void setColorstatus(Color cs) {
-    colorStatus = cs;
+  void setColorstatus(Color colorStatus) {
+    this.colorStatus = colorStatus;
   }
 
   bool getSelected() {
     return selected;
   }
 
-  void setSelected(bool sel) {
-    selected = sel;
+  void setSelected(bool selected) {
+    this.selected = selected;
   }
 }
 
-List<Device> data = [
+List<Device> deviceList = [
   Device(nameDeivce: "Router 1", ip: "192.168.1.39"),
-  Device(nameDeivce: "Router 2", ip: "google.com"),
-  Device(nameDeivce: "Router 3", ip: "youtube.com"),
-  Device(nameDeivce: "Router 1", ip: "192.168.1.39"),
-  Device(nameDeivce: "Router 2", ip: "google.com"),
-  Device(nameDeivce: "Router 3", ip: "youtube.com"),
+  Device(nameDeivce: "Router 2", ip: "192.168.1.39"),
+  Device(nameDeivce: "Router 3", ip: "192.168.1.39"),
+  Device(nameDeivce: "Router 4", ip: "192.168.1.39"),
+  Device(nameDeivce: "Router 5", ip: "192.168.1.39"),
 ];

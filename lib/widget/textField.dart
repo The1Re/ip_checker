@@ -1,15 +1,25 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class textField extends StatefulWidget {
-  const textField({super.key , required this.widthField});
+  textField({super.key , required this.widthField});
   final double widthField;
-  
+  final myController = TextEditingController();
+
+
   @override
   State<textField> createState() => _textFieldState();
 }
 
 class _textFieldState extends State<textField> {
+  
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    widget.myController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,8 +46,9 @@ class _textFieldState extends State<textField> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Expanded(
-                    child: TextField(
+                Expanded(
+                  child: TextField(
+                  controller: widget.myController,
                   showCursor: false,
                   decoration: InputDecoration(
                     border: InputBorder.none,
