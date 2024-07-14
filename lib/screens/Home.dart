@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               margin: EdgeInsetsDirectional.only(top: 20),
-              height: 600,
+              height: 490,
               child: deviceCard()
             ),
           ],

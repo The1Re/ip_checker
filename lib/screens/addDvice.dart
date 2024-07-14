@@ -11,8 +11,8 @@ class Adddvice extends StatefulWidget {
 }
 
 class _AdddviceState extends State<Adddvice> {
-  textField nameDevice = textField(widthField: 350);
-  textField ipAddress = textField(widthField: 240);
+  textField nameDevice = textField(widthField: 340);
+  textField ipAddress = textField(widthField: 220);
   textField port = textField(widthField: 90);
 
   @override
@@ -54,7 +54,7 @@ class _AdddviceState extends State<Adddvice> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(left: 27),
+                      padding: EdgeInsets.only(left: 10),
                       child: Text(
                         "Name device",
                         style: TextStyle(
@@ -74,7 +74,7 @@ class _AdddviceState extends State<Adddvice> {
                       children: [
                         //ip address
                         Container(
-                          padding: EdgeInsets.only(left: 27),
+                          padding: EdgeInsets.only(left: 10),
                           margin: EdgeInsets.only(bottom: 10, top: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +91,7 @@ class _AdddviceState extends State<Adddvice> {
                         ),
                         //Port
                         Container(
-                          padding: EdgeInsets.only(left: 27),
+                          padding: EdgeInsets.only(left: 30),
                           margin: EdgeInsets.only(bottom: 10, top: 10),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -192,7 +192,8 @@ class _AdddviceState extends State<Adddvice> {
                 ),
               )
             ],
-          ))
+          )
+          ),
         ],
       ),
     );
