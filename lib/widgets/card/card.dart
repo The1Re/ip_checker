@@ -1,81 +1,81 @@
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
-import 'package:ip_checker/model/Device.dart';
+import 'package:ip_checker/model/device.dart';
 
-class deviceCard extends StatefulWidget {
-  const deviceCard({super.key});
+class CardDevice extends StatefulWidget {
+  final Device device;
+  final Function(Device) deleteDevice;
+
+  const CardDevice({super.key, required this.device, required this.deleteDevice});
 
   @override
-  State<deviceCard> createState() => _deviceCardState();
+  State<CardDevice> createState() => _CardDeviceState();
 }
 
-class _deviceCardState extends State<deviceCard> {
+class _CardDeviceState extends State<CardDevice> {
+  bool _showDetail = false;
 
+  @override
+  void initState() {
+    super.initState();
+    ping(widget.device);
+  }
 
-  void PingCheck(int index) {
-    bool In = false;
-    setState(() {
-      final ping = Ping(deviceList[index].ip, count: 5);
-      ping.stream.listen((event) {
-        print(event);
-        if (event.error != null && In == false) {
-          deviceList[index].setColorstatus(Color.fromRGBO(206, 68, 68, 100));
-          deviceList[index].setStatus(false);
-          In = true;
-        } else if (event.error == null && In == false) {
-          deviceList[index].setColorstatus(Color.fromRGBO(64, 230, 171, 100));
-          deviceList[index].setStatus(true);
-          In = true;
+  void ping(Device device) {
+    bool visited = false;
+
+    final ping = Ping(device.ip, count: 5);
+    ping.stream.listen((event) {
+      if (visited) return;
+      setState(() {
+        if (event.response?.ttl != null) {
+          device.setColorstatus(ONLINE);
+          device.setStatus(true);
+        } else {
+          device.setColorstatus(OFFLINE);
+          device.setStatus(false);
         }
       });
+      visited = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: deviceList.length,
-      scrollDirection: Axis.vertical,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        return GestureDetector(
+    return GestureDetector(
           onTap: () {
             setState(() {
-              if(!deviceList[index].getSelected()){
-                deviceList[index].setSelected(true);
-              }else{
-                deviceList[index].setSelected(false);
-              }
+              _showDetail = !_showDetail;
             });
           },
           child: AnimatedContainer(
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
                 boxShadow: [
                   BoxShadow(
-                      color: deviceList[index].colorStatus,
+                      color: widget.device.colorStatus,
                       blurRadius: 7,
-                      offset: Offset(0, 0))
+                      offset: const Offset(0, 0))
                 ]),
-            height: deviceList[index].getSelected() ? 100 : 190 ,
+            height: _showDetail ? 190 : 100 ,
             padding: const EdgeInsets.only(left: 10, top: 10),
             margin:
                 const EdgeInsets.only(bottom: 20, top: 20, left: 4, right: 4),
             duration: const Duration(milliseconds: 200),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,  //bug!
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: 5, left: 5),
+                      margin: const EdgeInsets.only(top: 5, left: 5),
                       width: 20,
                       height: 20,
                       decoration: BoxDecoration(
-                          color: deviceList[index].colorStatus,
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                          color: widget.device.colorStatus,
+                          borderRadius: const BorderRadius.all(Radius.circular(20))),
                     ),
                   ],
                 ),
@@ -86,13 +86,13 @@ class _deviceCardState extends State<deviceCard> {
                     Padding(
                       padding: const EdgeInsets.only(right:0),
                       child: Text(
-                        deviceList[index].nameDeivce,
-                        style: TextStyle(
+                        widget.device.name,
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Text(deviceList[index].ip,
-                        style: TextStyle(fontSize: 20, color: Colors.grey)),
+                    Text(widget.device.ip,
+                        style: const TextStyle(fontSize: 20, color: Colors.grey)),
                   ],
                 ),
                 
@@ -104,39 +104,40 @@ class _deviceCardState extends State<deviceCard> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      deviceList[index].status ? "online" : "offline",
-                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                      widget.device.status ? "online" : "offline",
+                      style: const TextStyle(fontSize: 20, color: Colors.grey),
                     ),
                     Visibility(
-                        visible: deviceList[index].getSelected() ? false : true,
+                        visible: _showDetail,
                         child: AnimatedOpacity(
-                          opacity: deviceList[index].getSelected() ? 0.0 : 1.0,
+                          opacity: _showDetail ? 1.0 : 0.0, //device.getSelected() ? 0.0 : 1.0
                           duration: const Duration(milliseconds: 0),
-                          child:Row(
+                          child: Row(
                             children: [
 
                             FilledButton(
-                            style: ButtonStyle(
+                            style: const ButtonStyle(
                                 shape: WidgetStatePropertyAll(CircleBorder()),
                                 backgroundColor: WidgetStatePropertyAll(
                                     Color.fromRGBO(172, 192, 220, 100))),
                             onPressed: () {
-                              PingCheck(index);
+                              ping(widget.device);
+
                             },
-                            child: Icon(Icons.edit , size: 20,),
+                            child: const Icon(Icons.edit , size: 20,),
                           ),
 
                             FilledButton(
-                            style: ButtonStyle(
+                            style: const ButtonStyle(
                                 shape: WidgetStatePropertyAll(CircleBorder()),
                                 backgroundColor: WidgetStatePropertyAll(
                                     Color.fromRGBO(206, 68, 68, 100))),
                             onPressed: () {
                               setState(() {
-                                deviceList.removeAt(index);
+                                widget.deleteDevice(widget.device);
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               "X",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
@@ -151,7 +152,5 @@ class _deviceCardState extends State<deviceCard> {
             ),
           ),
         );
-      },
-    );
   }
 }

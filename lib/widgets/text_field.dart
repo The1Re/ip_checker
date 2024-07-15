@@ -1,22 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class textField extends StatefulWidget {
-  textField({super.key , required this.widthField});
+class MyTextField extends StatefulWidget {
   final double widthField;
-  final myController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
 
+  MyTextField({super.key , required this.widthField});
 
   @override
-  State<textField> createState() => _textFieldState();
+  State<MyTextField> createState() => _MyTextFieldState();
 }
 
-class _textFieldState extends State<textField> {
+class _MyTextFieldState extends State<MyTextField> {
   
+
+  @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    widget.myController.dispose();
+    widget.textController.dispose();
     super.dispose();
   }
 
@@ -27,7 +27,7 @@ class _textFieldState extends State<textField> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 255, 255, 255),
                 borderRadius: BorderRadius.all(Radius.circular(12)),
                 boxShadow: [
@@ -37,9 +37,7 @@ class _textFieldState extends State<textField> {
                     offset: Offset(0, 0),
                   )
                 ]),
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             width: MediaQuery.of(context).size.width*widget.widthField,
             height: 43,
             child: Row(
@@ -48,13 +46,13 @@ class _textFieldState extends State<textField> {
               children: [
                 Expanded(
                   child: TextField(
-                  controller: widget.myController,
-                  showCursor: false,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                )),
+                    controller: widget.textController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                    ),
+                  )
+                ),
               ],
             ),
           )

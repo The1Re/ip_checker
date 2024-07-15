@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:ip_checker/model/Device.dart';
-import 'package:ip_checker/screens/Home.dart';
-import 'package:ip_checker/widget/textField.dart';
+import 'package:ip_checker/model/device.dart';
+import 'package:ip_checker/screens/home.dart';
+import 'package:ip_checker/widgets/text_field.dart';
 
-class Adddvice extends StatefulWidget {
-  const Adddvice({super.key});
+class AddDevice extends StatefulWidget {
+  const AddDevice({super.key});
 
   @override
-  State<Adddvice> createState() => _AdddviceState();
+  State<AddDevice> createState() => _AddDeviceState();
 }
 
-class _AdddviceState extends State<Adddvice> {
-  textField nameDevice = textField(widthField: 0.95);
-  textField ipAddress = textField(widthField: 0.6);
-  textField port = textField(widthField: 0.26);
+class _AddDeviceState extends State<AddDevice> {
+  MyTextField nameDevice = MyTextField(widthField: 0.95);
+  MyTextField ipAddress = MyTextField(widthField: 0.6);
+  MyTextField port = MyTextField(widthField: 0.26);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,11 +150,11 @@ class _AdddviceState extends State<Adddvice> {
                                   Color.fromRGBO(101, 138, 190, 0.644))),
                           onPressed: () {
                             setState(() {
-                              if (nameDevice.myController.text != "" &&
-                                  ipAddress.myController.text != "") {
+                              if (nameDevice.textController.text != "" &&
+                                  ipAddress.textController.text != "") {
                                 Device _addDevice = Device(
-                                    nameDeivce: nameDevice.myController.text,
-                                    ip: ipAddress.myController.text);
+                                    name: nameDevice.textController.text,
+                                    ip: ipAddress.textController.text);
                                 deviceList.add(_addDevice);
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
@@ -191,8 +191,7 @@ class _AdddviceState extends State<Adddvice> {
                 ),
               )
             ],
-          )
-          ),
+          )),
         ],
       ),
     );
