@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/aum35/OneDrive/Desktop/ip_checker/linux"
+    "cmake.sourceDirectory": "C:/Users/aum35/OneDrive/Desktop/ip_checker/linux",
+    "cmake.ignoreCMakeListsMissing": true
 }

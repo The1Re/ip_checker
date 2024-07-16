@@ -1,29 +1,39 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
-class Device {
-  Device({required this.nameDeivce,required this.ip,required this.status});
-  String nameDeivce;
-  String ip;
-  bool status;
-  Color online = Color.fromRGBO(64, 230, 171, 100);
-  Color offline = Color.fromRGBO(206, 68, 68, 100);
-  Color colorStatus = Colors.grey;
+const Color ONLINE = Color.fromRGBO(64, 230, 171, 100);
+const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
 
-  void setStatus(bool s){
-    status = s;
+class Device {
+  String name;
+  String ip;
+  bool status = false;
+  Color colorStatus = Colors.grey;
+  bool selected = false;
+
+  Device({required this.name, required this.ip});
+
+  void setStatus(bool status) {
+    this.status = status;
   }
 
-  void setColorstatus(Color cs){
-    colorStatus = cs;
+  void setColorstatus(Color colorStatus) {
+    this.colorStatus = colorStatus;
+  }
+
+  bool getSelected() {
+    return selected;
+  }
+
+  void setSelected(bool selected) {
+    this.selected = selected;
   }
 }
 
-
-
-List<Device> data =[
-  Device(nameDeivce: "Router 1", ip: "192.168.1.39", status: true),
-  Device(nameDeivce: "Router 2", ip: "google.com", status: true),
-  Device(nameDeivce: "Router 3", ip: "youtube.com", status: false),
+List<Device> deviceList = [
+  Device(name: "Router 1", ip: "10.0.2.2"),
+  Device(name: "Router 2", ip: "192.168.1.39"),
+  Device(name: "Router 3", ip: "192.168.1.39"),
+  Device(name: "Router 4", ip: "192.168.1.39"),
+  Device(name: "Router 5", ip: "192.168.1.39"),
 ];
