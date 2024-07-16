@@ -24,9 +24,17 @@ class Device {
   bool getSelected() {
     return selected;
   }
-
+  String get names => name; 
   void setSelected(bool selected) {
     this.selected = selected;
+  }
+
+  void setName(String name){
+    this.name = name;
+  }
+
+  void setIp(String ip){
+    this.ip = ip;
   }
 }
 

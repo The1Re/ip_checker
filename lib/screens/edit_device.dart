@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
-import 'package:ip_checker/screens/home.dart';
+import 'package:ip_checker/screens/Home.dart';
 import 'package:ip_checker/widgets/text_field.dart';
 
-class AddDevice extends StatefulWidget {
-  AddDevice({super.key});
+class EditDevice extends StatefulWidget {
+  EditDevice({super.key,required this.device});
 
-  late MyTextField nameDevice , ipAddress;
+  final Device device;
+  late MyTextField nameDevice , ipAddress ;
 
   @override
-  State<AddDevice> createState() => _AddDeviceState();
+  State<EditDevice> createState() => _EditDeviceState();
 }
 
-class _AddDeviceState extends State<AddDevice> {
+class _EditDeviceState extends State<EditDevice> {
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    widget.nameDevice = MyTextField(widthField: 0.95,text: "",);
-    widget.ipAddress = MyTextField(widthField: 0.95,text: "",);
+    widget.nameDevice = MyTextField(widthField: 0.95,text: widget.device.name,);
+    widget.ipAddress = MyTextField(widthField: 0.95,text: widget.device.ip,);
   }
 
   @override
@@ -56,8 +57,11 @@ class _AddDeviceState extends State<AddDevice> {
             padding: EdgeInsets.only(top: 20),
             child: Column(
               children: [
+
                 //name device
+
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
@@ -77,30 +81,18 @@ class _AddDeviceState extends State<AddDevice> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        //ip address
-                        Container(
-                          padding: EdgeInsets.only(left: 10),
-                          margin: EdgeInsets.only(bottom: 10, top: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Ip address",
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Color.fromRGBO(37, 37, 37, 0.612)),
-                              ),
-                              widget.ipAddress,
-                            ],
-                          ),
-                        ),
-                        
-                      ],
-                    )
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        "Ip address",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromRGBO(37, 37, 37, 0.612)),
+                      ),
+                    ),
+                    widget.ipAddress,
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -140,16 +132,17 @@ class _AddDeviceState extends State<AddDevice> {
                               backgroundColor: WidgetStatePropertyAll(
                                   Color.fromRGBO(101, 138, 190, 0.644))),
                           onPressed: () {
-                            setState(() {
-
-                              //<---- Insert data to database here ---->
-
-                              if (widget.nameDevice.textController.text != "" &&
+                            if (widget.nameDevice.textController.text != "" &&
                                   widget.ipAddress.textController.text != "") {
-                                Device _addDevice = Device(
-                                    name: widget.nameDevice.textController.text,
-                                    ip: widget.ipAddress.textController.text);
-                                deviceList.add(_addDevice);
+
+
+                                // <----Update data to database here---->
+
+
+                                widget.device.name = widget.nameDevice.textController.text;
+                                widget.device.ip = widget.ipAddress.textController.text;
+
+                                
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                         builder: (context) => HomePage()));
@@ -176,9 +169,8 @@ class _AddDeviceState extends State<AddDevice> {
                                   },
                                 );
                               }
-                            });
                           },
-                          child: Text("ADD",
+                          child: Text("SAVE",
                               style: TextStyle(color: Colors.white)),
                         )),
                   ],
