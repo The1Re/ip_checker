@@ -6,7 +6,7 @@ import 'package:ip_checker/widgets/text_field.dart';
 class AddDevice extends StatefulWidget {
   AddDevice({super.key});
 
-  late MyTextField nameDevice , ipAddress;
+  late final MyTextField nameDevice , ipAddress;
 
   @override
   State<AddDevice> createState() => _AddDeviceState();

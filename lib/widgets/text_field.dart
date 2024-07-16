@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyTextField extends StatefulWidget {
   final double widthField;
-  late TextEditingController textController;
+  late final TextEditingController textController;
   final String text;
   MyTextField({super.key , required this.widthField , required this.text});
 

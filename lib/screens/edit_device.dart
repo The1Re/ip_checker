@@ -7,7 +7,7 @@ class EditDevice extends StatefulWidget {
   EditDevice({super.key,required this.device});
 
   final Device device;
-  late MyTextField nameDevice , ipAddress ;
+  late final MyTextField nameDevice , ipAddress ;
 
   @override
   State<EditDevice> createState() => _EditDeviceState();
