@@ -7,11 +7,13 @@ const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
 class Device {
   String name;
   String ip;
+  late DateTime addDate;
+  late DateTime lastOffline;
   bool status = false;
   Color colorStatus = Colors.grey;
   bool selected = false;
 
-  Device({required this.name, required this.ip});
+  Device({required this.name, required this.ip ,required this.addDate});
 
   void setStatus(bool status) {
     this.status = status;
@@ -39,9 +41,5 @@ class Device {
 }
 
 List<Device> deviceList = [
-  Device(name: "Router 1", ip: "10.0.2.2"),
-  Device(name: "Router 2", ip: "192.168.1.39"),
-  Device(name: "Router 3", ip: "192.168.1.39"),
-  Device(name: "Router 4", ip: "192.168.1.39"),
-  Device(name: "Router 5", ip: "192.168.1.39"),
+  Device(name: "Router 1", ip: "10.0.2.2",addDate:DateTime.now()),
 ];

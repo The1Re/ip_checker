@@ -148,7 +148,9 @@ class _AddDeviceState extends State<AddDevice> {
                                   widget.ipAddress.textController.text != "") {
                                 Device _addDevice = Device(
                                     name: widget.nameDevice.textController.text,
-                                    ip: widget.ipAddress.textController.text);
+                                    ip: widget.ipAddress.textController.text,
+                                    addDate: DateTime.now(),
+                                    );
                                 deviceList.add(_addDevice);
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(

@@ -29,7 +29,7 @@ class _EditDeviceState extends State<EditDevice> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          "Add Device",
+          "Edit Device",
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
@@ -45,7 +45,7 @@ class _EditDeviceState extends State<EditDevice> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Check the condition of the equipment.",
+                  "Configure your new device.",
                   style: TextStyle(
                       fontSize: 20, color: Color.fromARGB(255, 80, 80, 80)),
                 )

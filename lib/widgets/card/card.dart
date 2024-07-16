@@ -2,6 +2,7 @@ import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/edit_device.dart';
+import 'package:intl/intl.dart';
 
 class CardDevice extends StatefulWidget {
   final Device device;
@@ -60,15 +61,16 @@ class _CardDeviceState extends State<CardDevice> {
                   blurRadius: 7,
                   offset: const Offset(0, 0))
             ]),
-        height: _showDetail ? 190 : 100,
+        height: _showDetail ? 200 : 100,
         padding: const EdgeInsets.only(left: 10, top: 10),
         margin: const EdgeInsets.only(bottom: 20, top: 20, left: 4, right: 4),
         duration: const Duration(milliseconds: 200),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, //bug!
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
                   margin: const EdgeInsets.only(top: 5, left: 5),
@@ -81,21 +83,64 @@ class _CardDeviceState extends State<CardDevice> {
                 ),
               ],
             ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.45,
+              height: MediaQuery.of(context).size.height * 0.45,
+              padding: EdgeInsets.only(left: 10),
+              margin: EdgeInsets.zero,
+          
+              child: Wrap(
             
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  //padding: const EdgeInsets.only(right: 0),
-                  child: Text(
+
+                children: [
+                  // <---- Name device---->
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                     widget.device.name,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
-                Text(widget.device.ip,
-                    style: const TextStyle(fontSize: 20, color: Colors.grey)),
-              ],
+
+
+                  // <----Ip address here---->
+                  Text(widget.device.ip,
+                      style: const TextStyle(fontSize: 20, color: Colors.grey)),
+                    ],
+                  ),
+                  
+                  
+                  Visibility(
+                      visible: _showDetail,
+                      child: AnimatedOpacity(
+                        opacity: _showDetail ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 0),
+                        child: Container(
+                          padding: EdgeInsets.only(top: 10),
+                          margin: EdgeInsets.zero,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  "Date add: " +
+                                      (DateFormat.yMMMd()
+                                          .format(widget.device.addDate)),
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.grey)),
+                              Text(
+                                  "Last offline: " +
+                                      (DateFormat.yMMMd()
+                                          .format(widget.device.addDate)),
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.grey)),
+                            ],
+                          ),
+                        ),
+                      ))
+                ],
+              ),
             ),
             Container(
                 padding: EdgeInsets.zero,
@@ -103,13 +148,13 @@ class _CardDeviceState extends State<CardDevice> {
                 width: 140,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  
                   children: [
-                    Padding(
+                    Container(
                       padding: const EdgeInsets.only(left: 50),
                       child: Text(
                         widget.device.status ? "online" : "offline",
-                        style: const TextStyle(fontSize: 20, color: Colors.grey),
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.grey),
                       ),
                     ),
                     Visibility(
