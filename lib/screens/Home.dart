@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   void deleteDevice(Device device) {
     setState(() {
       _devices.remove(device);
+      _filteredDevices = _devices;
     });
   }
 
@@ -88,7 +89,14 @@ class _HomePageState extends State<HomePage> {
                 deleteDevice: deleteDevice
               )
             ) : Container(
-              child: const Text("No device"),
+              height: MediaQuery.of(context).size.height*0.65,
+              child:const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[ 
+                Text("No device",style: TextStyle(fontSize: 20,color: Colors.grey),),
+                ]
+              ),
             ),
           ],
         ),
@@ -104,7 +112,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator
             .of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => AddDevice()));
+            .pushReplacement(MaterialPageRoute(builder: (context) =>const AddDevice()));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

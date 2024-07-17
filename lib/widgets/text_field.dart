@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class MyTextField extends StatefulWidget {
   final double widthField;
-  late final TextEditingController textController;
   final String text;
+  late final TextEditingController textController;
   MyTextField({super.key , required this.widthField , required this.text});
 
   @override
@@ -12,9 +12,9 @@ class MyTextField extends StatefulWidget {
 
 class _MyTextFieldState extends State<MyTextField> {
   
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.textController = TextEditingController(text: widget.text);
   }

@@ -86,7 +86,7 @@ class _CardDeviceState extends State<CardDevice> {
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
               height: MediaQuery.of(context).size.height * 0.45,
-              padding: EdgeInsets.only(left: 10),
+              padding:const EdgeInsets.only(left: 10),
               margin: EdgeInsets.zero,
           
               child: Wrap(
@@ -118,21 +118,19 @@ class _CardDeviceState extends State<CardDevice> {
                         opacity: _showDetail ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 0),
                         child: Container(
-                          padding: EdgeInsets.only(top: 10),
+                          padding:const EdgeInsets.only(top: 10),
                           margin: EdgeInsets.zero,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  "Date add: " +
-                                      (DateFormat.yMMMd()
-                                          .format(widget.device.addDate)),
+                                  "Date add: ${DateFormat.yMMMd()
+                                          .format(widget.device.addDate)}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                               Text(
-                                  "Last offline: " +
-                                      (DateFormat.yMMMd()
-                                          .format(widget.device.addDate)),
+                                  "Last offline: ${DateFormat.yMMMd()
+                                          .format(widget.device.addDate)}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                             ],

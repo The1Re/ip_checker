@@ -4,23 +4,28 @@ import 'package:ip_checker/screens/Home.dart';
 import 'package:ip_checker/widgets/text_field.dart';
 
 class EditDevice extends StatefulWidget {
-  EditDevice({super.key,required this.device});
-
   final Device device;
-  late final MyTextField nameDevice , ipAddress ;
+
+  const EditDevice({super.key, required this.device});
 
   @override
   State<EditDevice> createState() => _EditDeviceState();
 }
 
 class _EditDeviceState extends State<EditDevice> {
+  late MyTextField nameDevice, ipAddress;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    widget.nameDevice = MyTextField(widthField: 0.95,text: widget.device.name,);
-    widget.ipAddress = MyTextField(widthField: 0.95,text: widget.device.ip,);
+    nameDevice = MyTextField(
+      widthField: 0.95,
+      text: widget.device.name,
+    );
+    ipAddress = MyTextField(
+      widthField: 0.95,
+      text: widget.device.ip,
+    );
   }
 
   @override
@@ -28,7 +33,7 @@ class _EditDeviceState extends State<EditDevice> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Edit Device",
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
@@ -38,10 +43,10 @@ class _EditDeviceState extends State<EditDevice> {
         children: [
           //Text add new device
           Container(
-            padding: EdgeInsets.only(left: 5),
+            padding: const EdgeInsets.only(left: 5),
             //margin: EdgeInsets.zero,
             width: 400,
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
@@ -54,10 +59,9 @@ class _EditDeviceState extends State<EditDevice> {
           ),
           //Text field
           Container(
-            padding: EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20),
             child: Column(
               children: [
-
                 //name device
 
                 Column(
@@ -65,15 +69,15 @@ class _EditDeviceState extends State<EditDevice> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: const Text(
                         "Name device",
                         style: TextStyle(
                             fontSize: 15,
                             color: Color.fromRGBO(37, 37, 37, 0.612)),
                       ),
                     ),
-                    widget.nameDevice,
+                    nameDevice,
                   ],
                 ),
                 //ip address , Port
@@ -82,15 +86,15 @@ class _EditDeviceState extends State<EditDevice> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: const Text(
                         "Ip address",
                         style: TextStyle(
                             fontSize: 15,
                             color: Color.fromRGBO(37, 37, 37, 0.612)),
                       ),
                     ),
-                    widget.ipAddress,
+                    ipAddress,
                   ],
                 ),
               ],
@@ -106,71 +110,68 @@ class _EditDeviceState extends State<EditDevice> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                         width: 110,
                         child: FilledButton(
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll(
                                   Color.fromRGBO(159, 173, 192, 100))),
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => HomePage()));
+                                    builder: (context) =>const HomePage()));
                           },
-                          child: Text(
+                          child: const Text(
                             "CANCEL",
                             style: TextStyle(color: Colors.white),
                           ),
                         )),
-                    SizedBox(
+                    const SizedBox(
                       width: 100,
                     ),
-                    Container(
+                    SizedBox(
                         width: 110,
                         child: FilledButton(
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll(
                                   Color.fromRGBO(101, 138, 190, 0.644))),
                           onPressed: () {
-                            if (widget.nameDevice.textController.text != "" &&
-                                  widget.ipAddress.textController.text != "") {
+                            if (nameDevice.textController.text != "" &&
+                                ipAddress.textController.text != "") {
+                              // <----Update data to database here---->
 
+                              widget.device.name =
+                                  nameDevice.textController.text;
+                              widget.device.ip = ipAddress.textController.text;
 
-                                // <----Update data to database here---->
-
-
-                                widget.device.name = widget.nameDevice.textController.text;
-                                widget.device.ip = widget.ipAddress.textController.text;
-
-                                
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage()));
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      content: Text(
-                                        "Please provide all the necessary details.",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                              "OK",
-                                              style: TextStyle(fontSize: 15),
-                                            ))
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: const Text(
+                                      "Please provide all the necessary details.",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                            "OK",
+                                            style: TextStyle(fontSize: 15),
+                                          ))
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
-                          child: Text("SAVE",
+                          child: const Text("SAVE",
                               style: TextStyle(color: Colors.white)),
                         )),
                   ],
