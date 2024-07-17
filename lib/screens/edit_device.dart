@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/Home.dart';
+import 'package:ip_checker/utils/sqlite_helper.dart';
 import 'package:ip_checker/widgets/text_field.dart';
 
 class EditDevice extends StatefulWidget {
@@ -26,6 +27,43 @@ class _EditDeviceState extends State<EditDevice> {
       widthField: 0.95,
       text: widget.device.ip,
     );
+  }
+
+  void edit() async {
+    if (nameDevice.textController.text != "" &&
+        ipAddress.textController.text != "") {
+      Device update = Device(
+          name: nameDevice.textController.text,
+          ip: ipAddress.textController.text,
+          status: false,
+          dateAdd: DateTime.now(),
+          lastOffline: DateTime.now());
+      await SQLiteHelper().update(widget.device.name, update);
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomePage()));
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: const Text(
+              "Please provide all the necessary details.",
+              style: TextStyle(fontSize: 20),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(fontSize: 15),
+                  ))
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -119,7 +157,7 @@ class _EditDeviceState extends State<EditDevice> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) =>const HomePage()));
+                                    builder: (context) => const HomePage()));
                           },
                           child: const Text(
                             "CANCEL",
@@ -136,40 +174,7 @@ class _EditDeviceState extends State<EditDevice> {
                               backgroundColor: WidgetStatePropertyAll(
                                   Color.fromRGBO(101, 138, 190, 0.644))),
                           onPressed: () {
-                            if (nameDevice.textController.text != "" &&
-                                ipAddress.textController.text != "") {
-                              // <----Update data to database here---->
-
-                              widget.device.name =
-                                  nameDevice.textController.text;
-                              widget.device.ip = ipAddress.textController.text;
-
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()));
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    content: const Text(
-                                      "Please provide all the necessary details.",
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text(
-                                            "OK",
-                                            style: TextStyle(fontSize: 15),
-                                          ))
-                                    ],
-                                  );
-                                },
-                              );
-                            }
+                            edit(); //call edit fuction for edit device
                           },
                           child: const Text("SAVE",
                               style: TextStyle(color: Colors.white)),

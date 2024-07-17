@@ -3,6 +3,7 @@ import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/add_device.dart';
 import 'package:ip_checker/widgets/card/list_card.dart';
 import 'package:ip_checker/widgets/search_bar.dart';
+import 'package:ip_checker/utils/sqlite_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,11 +24,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchData() async {
-    setState(() {
-      // _devices = await fetchDeviceData();
-      _devices = deviceList;
-      _filteredDevices = deviceList; 
+    await SQLiteHelper().getDevice().then((deviceList){
+      setState(() {
+        _devices = deviceList;
+        _filteredDevices = deviceList; 
+      });
     });
+
+    // List<Device> deviceList = await SQLiteHelper().getDevice();
+    //   _devices = deviceList;
+    //   _filteredDevices = deviceList;
   }
 
   void updateFilteredDevices(List<Device> devices) {
@@ -36,7 +42,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void deleteDevice(Device device) {
+  void deleteDevice(Device device) async {
+    
     setState(() {
       _devices.remove(device);
       _filteredDevices = _devices;

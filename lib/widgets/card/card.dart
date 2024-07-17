@@ -1,8 +1,10 @@
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
+import 'package:ip_checker/screens/Home.dart';
 import 'package:ip_checker/screens/edit_device.dart';
 import 'package:intl/intl.dart';
+import 'package:ip_checker/utils/sqlite_helper.dart';
 
 class CardDevice extends StatefulWidget {
   final Device device;
@@ -22,6 +24,12 @@ class _CardDeviceState extends State<CardDevice> {
   void initState() {
     super.initState();
     ping(widget.device);
+  }
+
+  void delete() async {
+    await SQLiteHelper().delete(widget.device);
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
   }
 
   void ping(Device device) {
@@ -86,12 +94,9 @@ class _CardDeviceState extends State<CardDevice> {
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
               height: MediaQuery.of(context).size.height * 0.45,
-              padding:const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10),
               margin: EdgeInsets.zero,
-          
               child: Wrap(
-            
-
                 children: [
                   // <---- Name device---->
                   Column(
@@ -99,38 +104,35 @@ class _CardDeviceState extends State<CardDevice> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                    widget.device.name,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
+                        widget.device.name,
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
 
-
-                  // <----Ip address here---->
-                  Text(widget.device.ip,
-                      style: const TextStyle(fontSize: 20, color: Colors.grey)),
+                      // <----Ip address here---->
+                      Text(widget.device.ip,
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.grey)),
                     ],
                   ),
-                  
-                  
+
                   Visibility(
                       visible: _showDetail,
                       child: AnimatedOpacity(
                         opacity: _showDetail ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 0),
                         child: Container(
-                          padding:const EdgeInsets.only(top: 10),
+                          padding: const EdgeInsets.only(top: 10),
                           margin: EdgeInsets.zero,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  "Date add: ${DateFormat.yMMMd()
-                                          .format(widget.device.addDate)}",
+                                  "Date add: ${DateFormat.yMMMd().format(widget.device.dateAdd)}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                               Text(
-                                  "Last offline: ${DateFormat.yMMMd()
-                                          .format(widget.device.addDate)}",
+                                  "Last offline: ${DateFormat.yMMMd().format(widget.device.dateAdd)}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                             ],
@@ -190,7 +192,7 @@ class _CardDeviceState extends State<CardDevice> {
                                           Color.fromRGBO(206, 68, 68, 100))),
                                   onPressed: () {
                                     setState(() {
-                                      widget.deleteDevice(widget.device);
+                                      delete(); //call delete fuction for delete DEVICE
                                     });
                                   },
                                   child: const Text(
