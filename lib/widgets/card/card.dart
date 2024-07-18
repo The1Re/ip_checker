@@ -1,7 +1,6 @@
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
-import 'package:ip_checker/screens/Home.dart';
 import 'package:ip_checker/screens/edit_device.dart';
 import 'package:intl/intl.dart';
 import 'package:ip_checker/utils/sqlite_helper.dart';
@@ -28,8 +27,9 @@ class _CardDeviceState extends State<CardDevice> {
 
   void delete() async {
     await SQLiteHelper().delete(widget.device);
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+    setState(() {
+      widget.deleteDevice(widget.device);
+    });
   }
 
   void ping(Device device) {

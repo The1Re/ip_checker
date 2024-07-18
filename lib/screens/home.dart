@@ -30,10 +30,6 @@ class _HomePageState extends State<HomePage> {
         _filteredDevices = deviceList; 
       });
     });
-
-    // List<Device> deviceList = await SQLiteHelper().getDevice();
-    //   _devices = deviceList;
-    //   _filteredDevices = deviceList;
   }
 
   void updateFilteredDevices(List<Device> devices) {

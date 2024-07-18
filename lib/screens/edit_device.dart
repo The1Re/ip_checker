@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
-import 'package:ip_checker/screens/Home.dart';
+import 'package:ip_checker/screens/home.dart';
 import 'package:ip_checker/utils/sqlite_helper.dart';
 import 'package:ip_checker/widgets/text_field.dart';
 
