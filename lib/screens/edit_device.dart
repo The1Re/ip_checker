@@ -32,15 +32,64 @@ class _EditDeviceState extends State<EditDevice> {
   void edit() async {
     if (nameDevice.textController.text != "" &&
         ipAddress.textController.text != "") {
-      Device update = Device(
-          name: nameDevice.textController.text,
-          ip: ipAddress.textController.text,
-          status: false,
-          dateAdd: DateTime.now(),
-          lastOffline: DateTime.now());
-      await SQLiteHelper().update(widget.device.name, update);
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()));
+      if (await SQLiteHelper().isExist(nameDevice.textController.text)) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: const Text(
+                "This name has already used",
+                style: TextStyle(fontSize: 20),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(fontSize: 15),
+                    ))
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext ctx) {
+            return AlertDialog(
+              // title: const Text(''),
+              content: const Text('Are you sure?',
+              style: TextStyle(fontSize: 30),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Device update = Device(
+                        name: nameDevice.textController.text,
+                        ip: ipAddress.textController.text,
+                        status: false,
+                        dateAdd: DateTime.now(),
+                        lastOffline: DateTime.now());
+                    await SQLiteHelper().update(widget.device.name, update);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const HomePage()));
+                  },
+                  child: const Text('Yes'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('No'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     } else {
       showDialog(
         context: context,

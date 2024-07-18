@@ -27,19 +27,43 @@ class _AddDeviceState extends State<AddDevice> {
     );
   }
 
-  void add() {
+  void add() async {
     if (nameDevice.textController.text != "" &&
         ipAddress.textController.text != "") {
-      Device device = Device(
-          name: nameDevice.textController.text,
-          ip: ipAddress.textController.text,
-          status: false,
-          dateAdd: DateTime.now(),
-          lastOffline: DateTime.now());
-      SQLiteHelper().insert(device);
+      if (await SQLiteHelper().isExist(nameDevice.textController.text)) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: const Text(
+                "This name has already used",
+                style: TextStyle(fontSize: 20),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(fontSize: 15),
+                    ))
+              ],
+            );
+          },
+        );
+      } else {
+        Device device = Device(
+            name: nameDevice.textController.text,
+            ip: ipAddress.textController.text,
+            status: false,
+            dateAdd: DateTime.now(),
+            lastOffline: DateTime.now());
+        SQLiteHelper().insert(device);
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()));
+      }
     } else {
       showDialog(
         context: context,
@@ -183,7 +207,7 @@ class _AddDeviceState extends State<AddDevice> {
                                   Color.fromRGBO(101, 138, 190, 0.644))),
                           onPressed: () {
                             add();
-                              //<---- Insert data to database here ---->
+                            //<---- Insert data to database here ---->
                           },
                           child: const Text("ADD",
                               style: TextStyle(color: Colors.white)),

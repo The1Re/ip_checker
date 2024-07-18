@@ -25,11 +25,33 @@ class _CardDeviceState extends State<CardDevice> {
     ping(widget.device);
   }
 
-  void delete() async {
-    await SQLiteHelper().delete(widget.device);
-    setState(() {
-      widget.deleteDevice(widget.device);
-    });
+  void delete(){
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Please Confirm'),
+          content: const Text('Are you sure to remove the device?'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await SQLiteHelper().delete(widget.device);
+                widget.deleteDevice(widget.device);
+                
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('No'),
+            ),
+          ],
+        );
+          },
+        );
   }
 
   void ping(Device device) {

@@ -80,6 +80,12 @@ class SQLiteHelper {
       );
   }
 
+  Future<bool> isExist(String chkname) async {
+    Database db = await connectedDatabase();
+    var result = await db.rawQuery("SELECT * FROM $tableName WHERE name = '$chkname'");
+    return (result.isEmpty)? false : true;
+  }
+
   Future<void> emptySQLite() async {
     Database database = await connectedDatabase();
     await database
