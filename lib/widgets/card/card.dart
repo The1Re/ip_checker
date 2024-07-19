@@ -114,8 +114,8 @@ class _CardDeviceState extends State<CardDevice> {
               ],
             ),
             Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.45,
+              width: MediaQuery.of(context).size.width * 0.4,
+              height: MediaQuery.of(context).size.height * 0.4,
               padding: const EdgeInsets.only(left: 10),
               margin: EdgeInsets.zero,
               child: Wrap(
@@ -165,9 +165,9 @@ class _CardDeviceState extends State<CardDevice> {
               ),
             ),
             Container(
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.only(left: 25),
                 margin: EdgeInsets.zero,
-                width: 140,
+                width: MediaQuery.of(context).size.height * 0.2,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
