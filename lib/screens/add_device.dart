@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/home.dart';
 import 'package:ip_checker/utils/sqlite_helper.dart';
@@ -13,6 +14,9 @@ class AddDevice extends StatefulWidget {
 
 class _AddDeviceState extends State<AddDevice> {
   late MyTextField nameDevice, ipAddress;
+  Color selectICMP = Color.fromRGBO(101, 138, 190, 0.644);
+  Color selectHTTP = Color.fromRGBO(159, 173, 192, 100);
+  String selected = "ICMP";
 
   @override
   void initState() {
@@ -89,6 +93,22 @@ class _AddDeviceState extends State<AddDevice> {
     }
   }
 
+  void selectedICMP(){
+    setState(() {
+      selected = "ICMP";
+      selectICMP = Color.fromRGBO(101, 138, 190, 0.644);
+      selectHTTP = Color.fromRGBO(159, 173, 192, 100);
+    });
+  }
+
+  void selectedHTTP(){
+    setState(() {
+      selected = "HTTP";
+      selectICMP = Color.fromRGBO(159, 173, 192, 100);
+      selectHTTP = Color.fromRGBO(101, 138, 190, 0.644);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,6 +138,37 @@ class _AddDeviceState extends State<AddDevice> {
               ],
             ),
           ),
+
+          //Type Button
+          Container(
+            padding: const EdgeInsets.only(top: 20,bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FilledButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(selectICMP),
+
+                  ),
+                  onPressed: (){
+                    selectedICMP();
+                  }, 
+                child: const Text("  ICMP  "))
+                ,
+                FilledButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(selectHTTP),
+                    
+                  ),
+                  onPressed: (){
+                    selectedHTTP();
+                  }, 
+                child: const Text("  HTTP  "))
+              ],
+            ),
+          ),
+
+
           //Text field
           Container(
             padding: const EdgeInsets.only(top: 20),
@@ -189,7 +240,7 @@ class _AddDeviceState extends State<AddDevice> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => HomePage()));
+                                    builder: (context) => const HomePage()));
                           },
                           child: const Text(
                             "CANCEL",

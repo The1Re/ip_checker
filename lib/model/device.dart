@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 
 const Color ONLINE = Color.fromRGBO(64, 230, 171, 100);
 const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
+const Color LOW_ONLINE = Color.fromRGBO(235 , 179, 105, 100);
 
 class Device {
   String name;
   String ip;
+  //String type;
   bool status;
   DateTime dateAdd;
   DateTime lastOffline;

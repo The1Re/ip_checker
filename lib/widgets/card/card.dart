@@ -137,7 +137,7 @@ class _CardDeviceState extends State<CardDevice> {
                               fontSize: 20, color: Colors.grey)),
                     ],
                   ),
-
+                  //Date & LastOffline & Type
                   Visibility(
                       visible: _showDetail,
                       child: AnimatedOpacity(
@@ -155,6 +155,10 @@ class _CardDeviceState extends State<CardDevice> {
                                       fontSize: 15, color: Colors.grey)),
                               Text(
                                   "Last offline: ${DateFormat.yMMMd().format(widget.device.dateAdd)}",
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.grey)),
+                              Text(
+                                  "Type: HTTP",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                             ],
