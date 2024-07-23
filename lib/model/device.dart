@@ -5,42 +5,46 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 
-const Color ONLINE = Color.fromRGBO(64, 230, 171, 100);
-const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
-const Color LOW_ONLINE = Color.fromRGBO(235 , 179, 105, 100);
+// const Color ONLINE = Color.fromRGBO(64, 230, 171, 100);
+// const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
+// const Color LOW_ONLINE = Color.fromRGBO(235 , 179, 105, 100);
 
-enum TYPE {
+enum Type {
   icmp,
   http
 }
 
+enum Status {
+  online,
+  offline,
+  lowOnline
+}
+
+extension StatusTypeExtension on Status {
+  Color get color {
+    switch (this) {
+      case Status.online:
+        return const Color.fromRGBO(64, 230, 171, 100);
+      case Status.offline:
+        return const Color.fromRGBO(206, 68, 68, 100);
+      case Status.lowOnline:
+        return const Color.fromRGBO(235, 179, 105, 100);
+      default:
+        return Colors.grey;
+    }
+  }
+}
 class Device {
   String name;
   String ip;
-  //String type;
   bool status;
   DateTime dateAdd;
   DateTime lastOffline;
-
-  TYPE type;
-
+  Type type;
   Color colorStatus = Colors.grey;
-  bool selected = false;
 
-  void setStatus(bool status) {
-    this.status = status;
-  }
-
-  void setColorstatus(Color colorStatus) {
-    this.colorStatus = colorStatus;
-  }
-
-  bool getSelected() {
-    return selected;
-  }
-
-  void setSelected(bool selected) {
-    this.selected = selected;
+  void setStatus(Status status) {
+    
   }
 
   Device({
@@ -49,7 +53,7 @@ class Device {
     required this.status,
     required this.dateAdd,
     required this.lastOffline,
-    this.type = TYPE.icmp
+    this.type = Type.icmp
   });
 
   Device copyWith({

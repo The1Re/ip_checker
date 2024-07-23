@@ -1,15 +1,13 @@
 import 'dart:convert';
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
-import 'package:ip_checker/model/response.dart';
 import 'package:ip_checker/screens/add_device.dart';
 import 'package:ip_checker/widgets/card/list_card.dart';
 import 'package:ip_checker/widgets/search_bar.dart';
 import 'package:ip_checker/utils/sqlite_helper.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:flutter_icmp_ping/flutter_icmp_ping.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,47 +19,73 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Device> _devices = [];
   List<Device> _filteredDevices = [];
+  final List<StreamSubscription<void>> _subsciptions = []; //store streamInput when change page cancel it
 
   @override
   void initState() {
     //fetch data
     super.initState();
-    fetchData();
-
-    //schedule ping every 5 minute
-    Timer.periodic(const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
+    fetchData().then((onValue) {
+      //start program
+      pingAll(_filteredDevices);
+      //schedule ping every 5 minute
+      Timer.periodic(const Duration(seconds: 30), (Timer t) => pingAll(_filteredDevices));
+    });
   }
 
   //Work space
 
-  void pingAll(List<Device> devices) {
+  @override
+  void dispose() {
+    for (var subscription in _subsciptions) {
+      subscription.cancel();
+    }
+    super.dispose();
+  }
+
+  Future<void> pingAll(List<Device> devices) async {
 
     for (var device in devices) {
-      device.type == TYPE.icmp ? pingWithICMP(device) : pingWithHTTP(device);
+      device.type == Type.icmp ?  await pingWithICMP(device) : await pingWithHTTP(device);
     }
 
   }
 
-  void pingWithICMP(Device device) {
+  Future<void> pingWithICMP(Device device) async {
+    final ping = Ping(
+      device.ip, 
+      count: 1,
+      timeout: 5,
+      ipv6: false,
+    );
     
+    final subsciption = ping.stream.listen((event) {
+      if (!mounted) return;
+
+      if (event.response == null) {
+        setState(() => event.summary?.received != 0 ? device.setStatus(Status.online) : device.setStatus(Status.offline));
+      }
+    }).asFuture();
+
+    _subsciptions.add(subsciption.asStream().listen((event) {}));
   }
 
-  void pingWithHTTP(Device device) async {
+  Future<void> pingWithHTTP(Device device) async {
+
     http.Response response = await http.get(Uri.parse(device.ip));
     if (response.statusCode != 200) {
-      setState(() => device.setColorstatus(OFFLINE));
+      setState(() => device.setStatus(Status.offline));
     }else{
-
       final data = jsonDecode(response.body);
       Duration diff = _getDifferenceTime(data['time'] as int);
 
       if (diff.inMinutes > 5) {
-        setState(() => device.setColorstatus(LOW_ONLINE));
+        setState(() => device.setStatus(Status.lowOnline));
       }else {
-        setState(() => device.setColorstatus(ONLINE));
+        setState(() => device.setStatus(Status.online));
       }
-
     }
+
   }
 
   Duration _getDifferenceTime(int targetTimestamp) {

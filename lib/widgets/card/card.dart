@@ -1,4 +1,3 @@
-import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/edit_device.dart';
@@ -22,7 +21,7 @@ class _CardDeviceState extends State<CardDevice> {
   @override
   void initState() {
     super.initState();
-    ping(widget.device);
+    // ping(widget.device);
   }
 
   void delete(){
@@ -52,25 +51,6 @@ class _CardDeviceState extends State<CardDevice> {
         );
           },
         );
-  }
-
-  void ping(Device device) {
-    bool visited = false;
-
-    final ping = Ping(device.ip, count: 5);
-    ping.stream.listen((event) {
-      if (visited) return;
-      setState(() {
-        if (event.response?.ttl != null) {
-          device.setColorstatus(ONLINE);
-          device.setStatus(true);
-        } else {
-          device.setColorstatus(OFFLINE);
-          device.setStatus(false);
-        }
-      });
-      visited = true;
-    });
   }
 
   @override
@@ -158,7 +138,7 @@ class _CardDeviceState extends State<CardDevice> {
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                               Text(
-                                  "Type: HTTP",
+                                  "Type: ${widget.device.type.name.toUpperCase()}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                             ],
