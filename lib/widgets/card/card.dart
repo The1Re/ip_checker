@@ -60,7 +60,7 @@ class _CardDeviceState extends State<CardDevice> {
       case Status.offline:
         return "Offline";
       default:
-        return "Unknow";
+        return "Waiting";
     }
   }
 

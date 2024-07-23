@@ -65,18 +65,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingWithHTTP(Device device) async {
-    http.Response response = await http.get(Uri.parse(device.ip));
-    if (response.statusCode != 200) {
-      setState(() => device.setStatus(Status.offline));
-    }else{
-      final data = jsonDecode(response.body);
-      Duration diff = getDifferenceTime(data['time'] as int);
-      if (diff.inMinutes > 5) {
-        setState(() => device.setStatus(Status.lowOnline));
-      }else {
-        setState(() => device.setStatus(Status.online));
-      }
-    }
+      try {
+        http.Response response = await http.get(
+            Uri.parse("https://${device.ip}"),
+            headers: {"Accept": "application/json"}
+          ).timeout(const Duration(minutes: 5));
+        if (response.statusCode != 200) {
+          setState(() => device.setStatus(Status.offline));
+        }else{
+          final data = jsonDecode(response.body);
+          Duration diff = getDifferenceTime(data['time'] as int);
+          if (diff.inSeconds > 60) {
+            setState(() => device.setStatus(Status.lowOnline));
+          }else {
+            setState(() => device.setStatus(Status.online));
+          }
+        }
+      } on TimeoutException catch(_) {
+        setState(() => device.setStatus(Status.offline));
+      }      
   }
 
   Future<void> fetchData() async {
