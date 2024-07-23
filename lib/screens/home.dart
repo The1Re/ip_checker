@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
+import 'package:ip_checker/model/response.dart';
 import 'package:ip_checker/screens/add_device.dart';
 import 'package:ip_checker/widgets/card/list_card.dart';
 import 'package:ip_checker/widgets/search_bar.dart';
 import 'package:ip_checker/utils/sqlite_helper.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +27,51 @@ class _HomePageState extends State<HomePage> {
     //fetch data
     super.initState();
     fetchData();
+
+    //schedule ping every 5 minute
+    Timer.periodic(const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
   }
+
+  //Work space
+
+  void pingAll(List<Device> devices) {
+
+    for (var device in devices) {
+      device.type == TYPE.icmp ? pingWithICMP(device) : pingWithHTTP(device);
+    }
+
+  }
+
+  void pingWithICMP(Device device) {
+    
+  }
+
+  void pingWithHTTP(Device device) async {
+    http.Response response = await http.get(Uri.parse(device.ip));
+    if (response.statusCode != 200) {
+      setState(() => device.setColorstatus(OFFLINE));
+    }else{
+
+      final data = jsonDecode(response.body);
+      Duration diff = _getDifferenceTime(data['time'] as int);
+
+      if (diff.inMinutes > 5) {
+        setState(() => device.setColorstatus(LOW_ONLINE));
+      }else {
+        setState(() => device.setColorstatus(ONLINE));
+      }
+
+    }
+  }
+
+  Duration _getDifferenceTime(int targetTimestamp) {
+    DateTime targetTime = DateTime.fromMillisecondsSinceEpoch(targetTimestamp * 1000);
+    DateTime currentTime = DateTime.now();
+    return currentTime.difference(targetTime);
+  }
+
+  //
+
 
   Future<void> fetchData() async {
     await SQLiteHelper().getDevice().then((deviceList){

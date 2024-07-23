@@ -9,6 +9,11 @@ const Color ONLINE = Color.fromRGBO(64, 230, 171, 100);
 const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
 const Color LOW_ONLINE = Color.fromRGBO(235 , 179, 105, 100);
 
+enum TYPE {
+  icmp,
+  http
+}
+
 class Device {
   String name;
   String ip;
@@ -16,6 +21,8 @@ class Device {
   bool status;
   DateTime dateAdd;
   DateTime lastOffline;
+
+  TYPE type;
 
   Color colorStatus = Colors.grey;
   bool selected = false;
@@ -41,7 +48,8 @@ class Device {
     required this.ip,
     required this.status,
     required this.dateAdd,
-    required this.lastOffline
+    required this.lastOffline,
+    this.type = TYPE.icmp
   });
 
   Device copyWith({
