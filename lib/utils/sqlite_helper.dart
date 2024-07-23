@@ -11,9 +11,10 @@ class SQLiteHelper {
 
   String colName = 'name';
   final String colIP = 'ip';
-  final String colStatus = 'status';
   final String colDateAdd = 'dateAdd';
   final String colLastOff = 'lastOffline';
+  final String colType = 'type';
+  final String colStatus = 'status';
 
   SQLiteHelper(){
     initialDatabase();
@@ -26,9 +27,10 @@ class SQLiteHelper {
         '''CREATE TABLE $tableName(
         $colName TEXT PRIMARYKEY,
         $colIP TEXT,
-        $colStatus INTEGER,
         $colDateAdd TEXT,
-        $colLastOff TEXT
+        $colLastOff TEXT,
+        $colStatus TEXT,
+        $colType TEXT
         )''',
       );
     },

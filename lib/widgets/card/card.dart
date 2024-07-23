@@ -21,7 +21,6 @@ class _CardDeviceState extends State<CardDevice> {
   @override
   void initState() {
     super.initState();
-    // ping(widget.device);
   }
 
   void delete(){
@@ -53,6 +52,18 @@ class _CardDeviceState extends State<CardDevice> {
         );
   }
 
+  String getStatus(Status s) {
+    switch (s) {
+      case Status.online:
+      case Status.lowOnline:
+        return "Online";
+      case Status.offline:
+        return "Offline";
+      default:
+        return "Unknow";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -67,7 +78,7 @@ class _CardDeviceState extends State<CardDevice> {
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                  color: widget.device.colorStatus,
+                  color: widget.device.status.color,
                   blurRadius: 7,
                   offset: const Offset(0, 0))
             ]),
@@ -87,7 +98,7 @@ class _CardDeviceState extends State<CardDevice> {
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                      color: widget.device.colorStatus,
+                      color: widget.device.status.color,
                       borderRadius:
                           const BorderRadius.all(Radius.circular(20))),
                 ),
@@ -149,7 +160,7 @@ class _CardDeviceState extends State<CardDevice> {
               ),
             ),
             Container(
-                padding: EdgeInsets.only(left: 25),
+                padding: const EdgeInsets.only(left: 25),
                 margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.height * 0.2,
                 child: Column(
@@ -158,7 +169,7 @@ class _CardDeviceState extends State<CardDevice> {
                     Container(
                       padding: const EdgeInsets.only(left: 50),
                       child: Text(
-                        widget.device.status ? "online" : "offline",
+                        getStatus(widget.device.status),
                         style:
                             const TextStyle(fontSize: 20, color: Colors.grey),
                       ),

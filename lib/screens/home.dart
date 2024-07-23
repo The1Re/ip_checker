@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/add_device.dart';
+import 'package:ip_checker/utils/utils.dart';
 import 'package:ip_checker/widgets/card/list_card.dart';
 import 'package:ip_checker/widgets/search_bar.dart';
 import 'package:ip_checker/utils/sqlite_helper.dart';
@@ -29,11 +30,9 @@ class _HomePageState extends State<HomePage> {
       //start program
       pingAll(_filteredDevices);
       //schedule ping every 5 minute
-      Timer.periodic(const Duration(seconds: 30), (Timer t) => pingAll(_filteredDevices));
+      Timer.periodic(const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
     });
   }
-
-  //Work space
 
   @override
   void dispose() {
@@ -44,11 +43,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingAll(List<Device> devices) async {
-
     for (var device in devices) {
       device.type == Type.icmp ?  await pingWithICMP(device) : await pingWithHTTP(device);
     }
-
   }
 
   Future<void> pingWithICMP(Device device) async {
@@ -58,44 +55,29 @@ class _HomePageState extends State<HomePage> {
       timeout: 5,
       ipv6: false,
     );
-    
     final subsciption = ping.stream.listen((event) {
       if (!mounted) return;
-
       if (event.response == null) {
         setState(() => event.summary?.received != 0 ? device.setStatus(Status.online) : device.setStatus(Status.offline));
       }
     }).asFuture();
-
     _subsciptions.add(subsciption.asStream().listen((event) {}));
   }
 
   Future<void> pingWithHTTP(Device device) async {
-
     http.Response response = await http.get(Uri.parse(device.ip));
     if (response.statusCode != 200) {
       setState(() => device.setStatus(Status.offline));
     }else{
       final data = jsonDecode(response.body);
-      Duration diff = _getDifferenceTime(data['time'] as int);
-
+      Duration diff = getDifferenceTime(data['time'] as int);
       if (diff.inMinutes > 5) {
         setState(() => device.setStatus(Status.lowOnline));
       }else {
         setState(() => device.setStatus(Status.online));
       }
     }
-
   }
-
-  Duration _getDifferenceTime(int targetTimestamp) {
-    DateTime targetTime = DateTime.fromMillisecondsSinceEpoch(targetTimestamp * 1000);
-    DateTime currentTime = DateTime.now();
-    return currentTime.difference(targetTime);
-  }
-
-  //
-
 
   Future<void> fetchData() async {
     await SQLiteHelper().getDevice().then((deviceList){
@@ -113,7 +95,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteDevice(Device device) async {
-    
     setState(() {
       _devices.remove(device);
       _filteredDevices = _devices;

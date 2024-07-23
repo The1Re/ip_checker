@@ -70,7 +70,6 @@ class _EditDeviceState extends State<EditDevice> {
                     Device update = Device(
                         name: nameDevice.textController.text,
                         ip: ipAddress.textController.text,
-                        status: false,
                         dateAdd: DateTime.now(),
                         lastOffline: DateTime.now());
                     await SQLiteHelper().update(widget.device.name, update);

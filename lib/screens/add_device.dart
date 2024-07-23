@@ -60,7 +60,6 @@ class _AddDeviceState extends State<AddDevice> {
         Device device = Device(
             name: nameDevice.textController.text,
             ip: ipAddress.textController.text,
-            status: false,
             dateAdd: DateTime.now(),
             lastOffline: DateTime.now());
         SQLiteHelper().insert(device);
