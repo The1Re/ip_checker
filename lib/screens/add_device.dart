@@ -16,7 +16,7 @@ class _AddDeviceState extends State<AddDevice> {
   late MyTextField nameDevice, ipAddress;
   Color selectICMP = Color.fromRGBO(101, 138, 190, 0.644);
   Color selectHTTP = Color.fromRGBO(159, 173, 192, 100);
-  String selected = "ICMP";
+  Type selectedType = Type.icmp;
 
   @override
   void initState() {
@@ -61,7 +61,8 @@ class _AddDeviceState extends State<AddDevice> {
             name: nameDevice.textController.text,
             ip: ipAddress.textController.text,
             dateAdd: DateTime.now(),
-            lastOffline: DateTime.now());
+            lastOffline: DateTime.now(),
+            type: selectedType);
         SQLiteHelper().insert(device);
 
         Navigator.of(context).pushReplacement(
@@ -94,7 +95,7 @@ class _AddDeviceState extends State<AddDevice> {
 
   void selectedICMP(){
     setState(() {
-      selected = "ICMP";
+      selectedType = Type.icmp;
       selectICMP = Color.fromRGBO(101, 138, 190, 0.644);
       selectHTTP = Color.fromRGBO(159, 173, 192, 100);
     });
@@ -102,7 +103,7 @@ class _AddDeviceState extends State<AddDevice> {
 
   void selectedHTTP(){
     setState(() {
-      selected = "HTTP";
+      selectedType = Type.http;
       selectICMP = Color.fromRGBO(159, 173, 192, 100);
       selectHTTP = Color.fromRGBO(101, 138, 190, 0.644);
     });

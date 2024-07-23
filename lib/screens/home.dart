@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/add_device.dart';
+import 'package:ip_checker/utils/run_background.dart';
+import 'package:ip_checker/utils/show_notification.dart';
 import 'package:ip_checker/utils/utils.dart';
 import 'package:ip_checker/widgets/card/list_card.dart';
 import 'package:ip_checker/widgets/search_bar.dart';
@@ -26,6 +28,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     //fetch data
     super.initState();
+    RunBackground().startBackgroundTask();
+    ShowNotification().init();
     fetchData().then((onValue) {
       //start program
       pingAll(_filteredDevices);
@@ -59,24 +63,33 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       if (event.response == null) {
         setState(() => event.summary?.received != 0 ? device.setStatus(Status.online) : device.setStatus(Status.offline));
+        ShowNotification().scheduleNotifications(device);
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
   }
 
   Future<void> pingWithHTTP(Device device) async {
-    http.Response response = await http.get(Uri.parse(device.ip));
-    if (response.statusCode != 200) {
-      setState(() => device.setStatus(Status.offline));
-    }else{
-      final data = jsonDecode(response.body);
-      Duration diff = getDifferenceTime(data['time'] as int);
-      if (diff.inMinutes > 5) {
-        setState(() => device.setStatus(Status.lowOnline));
-      }else {
-        setState(() => device.setStatus(Status.online));
-      }
-    }
+      try {
+        http.Response response = await http.get(
+            Uri.parse("https://${device.ip}"),
+            headers: {"Accept": "application/json"}
+          ).timeout(const Duration(minutes: 5));
+        if (response.statusCode != 200) {
+          setState(() => device.setStatus(Status.offline));
+        }else{
+          final data = jsonDecode(response.body);
+          Duration diff = getDifferenceTime(data['time'] as int);
+          if (diff.inSeconds > 60) {
+            setState(() => device.setStatus(Status.lowOnline));
+          }else {
+            setState(() => device.setStatus(Status.online));
+          }
+        }
+      } on TimeoutException catch(_) {
+        setState(() => device.setStatus(Status.offline));
+        ShowNotification().scheduleNotifications(device);
+      }      
   }
 
   Future<void> fetchData() async {

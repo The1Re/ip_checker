@@ -1,4 +1,6 @@
 import 'dart:isolate';
+import 'package:ip_checker/utils/show_notification.dart';
+
 
 class RunBackground {
   ReceivePort _port = ReceivePort();
@@ -16,6 +18,8 @@ class RunBackground {
     // ...
 
     // Send result back to the main UI isolate
-    sendPort.send('Task completed Successfully!');
+    sendPort.send('Task completed successfully!');
   }
+
+
 }

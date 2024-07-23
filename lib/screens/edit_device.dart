@@ -16,10 +16,6 @@ class EditDevice extends StatefulWidget {
 class _EditDeviceState extends State<EditDevice> {
   late MyTextField nameDevice, ipAddress;
 
-  Color selectICMP = Color.fromRGBO(101, 138, 190, 0.644);
-  Color selectHTTP = Color.fromRGBO(159, 173, 192, 100);
-  String selected = "ICMP"; //Del when device have Type varible.....
-
   @override
   void initState() {
     super.initState();
@@ -118,22 +114,6 @@ class _EditDeviceState extends State<EditDevice> {
     }
   }
 
-  void selectedICMP(){
-    setState(() {
-      selected = "ICMP";
-      selectICMP = Color.fromRGBO(101, 138, 190, 0.644);
-      selectHTTP = Color.fromRGBO(159, 173, 192, 100);
-    });
-  }
-
-  void selectedHTTP(){
-    setState(() {
-      selected = "HTTP";
-      selectICMP = Color.fromRGBO(159, 173, 192, 100);
-      selectHTTP = Color.fromRGBO(101, 138, 190, 0.644);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,36 +143,6 @@ class _EditDeviceState extends State<EditDevice> {
               ],
             ),
           ),
-
-          Container(
-            padding: const EdgeInsets.only(top: 20,bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FilledButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(selectICMP),
-
-                  ),
-                  onPressed: (){
-                    selectedICMP();
-                  }, 
-                child: const Text("  ICMP  "))
-                ,
-                FilledButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(selectHTTP),
-                    
-                  ),
-                  onPressed: (){
-                    selectedHTTP();
-                  }, 
-                child: const Text("  HTTP  "))
-              ],
-            ),
-          ),
-
-
           //Text field
           Container(
             padding: const EdgeInsets.only(top: 20),
