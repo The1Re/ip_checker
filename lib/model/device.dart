@@ -1,83 +1,75 @@
-
-import 'dart:ui';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
+enum Type {
+  icmp,
+  http
+}
 
-const Color ONLINE = Color.fromRGBO(64, 230, 171, 100);
-const Color OFFLINE = Color.fromRGBO(206, 68, 68, 100);
-const Color LOW_ONLINE = Color.fromRGBO(235 , 179, 105, 100);
+enum Status {
+  online,
+  offline,
+  lowOnline,
+  unknow
+}
 
+extension StatusTypeExtension on Status {
+  Color get color {
+    switch (this) {
+      case Status.online:
+        return const Color.fromRGBO(64, 230, 171, 100);
+      case Status.offline:
+        return const Color.fromRGBO(206, 68, 68, 100);
+      case Status.lowOnline:
+        return const Color.fromRGBO(235, 179, 105, 100);
+      default:
+        return Colors.grey;
+    }
+  }
+}
 class Device {
   String name;
   String ip;
-  //String type;
-  bool status;
   DateTime dateAdd;
   DateTime lastOffline;
+  Type type;
+  Status status;
 
-  Color colorStatus = Colors.grey;
-  bool selected = false;
-
-  void setStatus(bool status) {
+  void setStatus(Status status) {
     this.status = status;
-  }
-
-  void setColorstatus(Color colorStatus) {
-    this.colorStatus = colorStatus;
-  }
-
-  bool getSelected() {
-    return selected;
-  }
-
-  void setSelected(bool selected) {
-    this.selected = selected;
+    if (status == Status.offline) {
+      lastOffline = DateTime.now(); //fix should update to database
+    }
   }
 
   Device({
     required this.name,
     required this.ip,
-    required this.status,
     required this.dateAdd,
-    required this.lastOffline
+    required this.lastOffline,
+    this.type = Type.icmp,
+    this.status = Status.unknow
   });
 
-  Device copyWith({
-    String? name,
-    String? ip,
-    bool? status,
-    DateTime? dateAdd,
-    DateTime? lastOffline,
-  }) {
-    return Device(
-      name: name ?? this.name, 
-      ip: ip ?? this.ip, 
-      status: status ?? this.status, 
-      dateAdd: dateAdd ?? this.dateAdd, 
-      lastOffline: lastOffline ?? this.lastOffline
-    );
-  }
   Map<String, Object?> toMap() {
-    int st = (status == true)? 1 : 0;
     return {
       'name': name,
       'ip': ip,
-      'status': st,
       'dateAdd': dateAdd.toIso8601String(),
       'lastOffline': lastOffline.toIso8601String(),
+      'status': status.name,
+      'type': type.name
     };
   }
 
   factory Device.fromMap(Map<String, dynamic> map) {
-    bool st = (map['status'] == 1 )? true : false;
     return Device(
       name: map['name'],
       ip: map['ip'],
-      status: st,
       dateAdd: DateTime.parse(map['dateAdd']),
       lastOffline: DateTime.parse(map['lastOffline']),
+      status: Status.values.byName(map['status']),
+      type: Type.values.byName(map['type'])
     );
   }
 
@@ -90,31 +82,13 @@ class Device {
     return """Device(
       name: $name, 
       ip: $ip, 
-      status: $status, 
       dateAdd: $dateAdd, 
-      lastOffline: $lastOffline, """;
+      lastOffline: $lastOffline,
+      status: $status,
+      type: $type
+      """;
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-  
-    return other is Device &&
-      other.name == name &&
-      other.ip == ip &&
-      other.status == status &&
-      other.dateAdd == dateAdd  &&
-      other.lastOffline == lastOffline;
-  }
-
-  @override
-  int get hashCode {
-    return name.hashCode ^
-      ip.hashCode ^
-      status.hashCode ^
-      dateAdd.hashCode ^
-      lastOffline.hashCode;
-  }
 }
 
 

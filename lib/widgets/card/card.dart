@@ -1,4 +1,3 @@
-import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/edit_device.dart';
@@ -22,7 +21,6 @@ class _CardDeviceState extends State<CardDevice> {
   @override
   void initState() {
     super.initState();
-    ping(widget.device);
   }
 
   void delete(){
@@ -54,23 +52,16 @@ class _CardDeviceState extends State<CardDevice> {
         );
   }
 
-  void ping(Device device) {
-    bool visited = false;
-
-    final ping = Ping(device.ip, count: 5);
-    ping.stream.listen((event) {
-      if (visited) return;
-      setState(() {
-        if (event.response?.ttl != null) {
-          device.setColorstatus(ONLINE);
-          device.setStatus(true);
-        } else {
-          device.setColorstatus(OFFLINE);
-          device.setStatus(false);
-        }
-      });
-      visited = true;
-    });
+  String getStatus(Status s) {
+    switch (s) {
+      case Status.online:
+      case Status.lowOnline:
+        return "Online";
+      case Status.offline:
+        return "Offline";
+      default:
+        return "Unknow";
+    }
   }
 
   @override
@@ -87,7 +78,7 @@ class _CardDeviceState extends State<CardDevice> {
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                  color: widget.device.colorStatus,
+                  color: widget.device.status.color,
                   blurRadius: 7,
                   offset: const Offset(0, 0))
             ]),
@@ -107,7 +98,7 @@ class _CardDeviceState extends State<CardDevice> {
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                      color: widget.device.colorStatus,
+                      color: widget.device.status.color,
                       borderRadius:
                           const BorderRadius.all(Radius.circular(20))),
                 ),
@@ -158,7 +149,7 @@ class _CardDeviceState extends State<CardDevice> {
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                               Text(
-                                  "Type: HTTP",
+                                  "Type: ${widget.device.type.name.toUpperCase()}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey)),
                             ],
@@ -169,7 +160,7 @@ class _CardDeviceState extends State<CardDevice> {
               ),
             ),
             Container(
-                padding: EdgeInsets.only(left: 25),
+                padding: const EdgeInsets.only(left: 25),
                 margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.height * 0.2,
                 child: Column(
@@ -178,7 +169,7 @@ class _CardDeviceState extends State<CardDevice> {
                     Container(
                       padding: const EdgeInsets.only(left: 50),
                       child: Text(
-                        widget.device.status ? "online" : "offline",
+                        getStatus(widget.device.status),
                         style:
                             const TextStyle(fontSize: 20, color: Colors.grey),
                       ),
