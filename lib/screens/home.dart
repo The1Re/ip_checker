@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/add_device.dart';
+import 'package:ip_checker/utils/run_background.dart';
+import 'package:ip_checker/utils/show_notification.dart';
 import 'package:ip_checker/utils/utils.dart';
 import 'package:ip_checker/widgets/card/list_card.dart';
 import 'package:ip_checker/widgets/search_bar.dart';
@@ -26,6 +28,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     //fetch data
     super.initState();
+    RunBackground().startBackgroundTask();
+    ShowNotification().init();
     fetchData().then((onValue) {
       //start program
       pingAll(_filteredDevices);
@@ -58,7 +62,12 @@ class _HomePageState extends State<HomePage> {
     final subsciption = ping.stream.listen((event) {
       if (!mounted) return;
       if (event.response == null) {
-        setState(() => event.summary?.received != 0 ? device.setStatus(Status.online) : device.setStatus(Status.offline));
+        if (event.summary?.received != 0) {
+          setState(() => device.setStatus(Status.online));
+        }else{
+          setState(() => device.setStatus(Status.offline));
+          ShowNotification().showNotification(device);
+        }
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
@@ -69,9 +78,11 @@ class _HomePageState extends State<HomePage> {
         http.Response response = await http.get(
             Uri.parse("https://${device.ip}"),
             headers: {"Accept": "application/json"}
-          ).timeout(const Duration(minutes: 5));
+          ).timeout(const Duration(minutes: 3));
+        if (!mounted) return;
         if (response.statusCode != 200) {
           setState(() => device.setStatus(Status.offline));
+          ShowNotification().showNotification(device);
         }else{
           final data = jsonDecode(response.body);
           Duration diff = getDifferenceTime(data['time'] as int);
@@ -81,8 +92,10 @@ class _HomePageState extends State<HomePage> {
             setState(() => device.setStatus(Status.online));
           }
         }
-      } on TimeoutException catch(_) {
+      } catch(_) {
+        if (!mounted) return;
         setState(() => device.setStatus(Status.offline));
+        ShowNotification().showNotification(device);
       }      
   }
 

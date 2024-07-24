@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ip_checker/screens/home.dart';
 
-class MyHttpOverrides extends HttpOverrides {
+class MyHttpOverride extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
@@ -12,7 +12,7 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 void main() async{
-  HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverride();
   runApp(const MyApp());
 }
 
@@ -27,3 +27,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
