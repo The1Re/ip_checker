@@ -34,6 +34,7 @@ class Device {
   DateTime lastOffline;
   Type type;
   Status status;
+  
 
   void setStatus(Status status) {
     this.status = status;

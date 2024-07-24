@@ -36,7 +36,6 @@ class _CardDeviceState extends State<CardDevice> {
                 Navigator.of(context).pop();
                 await SQLiteHelper().delete(widget.device);
                 widget.deleteDevice(widget.device);
-                
               },
               child: const Text('Yes'),
             ),

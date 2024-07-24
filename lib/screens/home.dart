@@ -23,18 +23,19 @@ class _HomePageState extends State<HomePage> {
   List<Device> _devices = [];
   List<Device> _filteredDevices = [];
   final List<StreamSubscription<void>> _subsciptions = []; //store streamInput when change page cancel it
+  final ShowNotification notification = ShowNotification();
 
   @override
   void initState() {
     //fetch data
     super.initState();
     RunBackground().startBackgroundTask();
-    ShowNotification().init();
+    notification.init();
     fetchData().then((onValue) {
       //start program
       pingAll(_filteredDevices);
       //schedule ping every 5 minute
-      Timer.periodic(const Duration(seconds: 60), (Timer t) => pingAll(_filteredDevices));
+      Timer.periodic(const Duration(seconds: 30), (Timer t) => pingAll(_filteredDevices));
     });
   }
 
@@ -63,11 +64,15 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       if (event.response == null) {
         if (event.summary?.received != 0) {
-          setState(() => device.setStatus(Status.online));
-          ShowNotification().closeNotification(1);
+          setState(() { 
+          device.setStatus(Status.online);
+          notification.closeNotification();
+          });
         }else{
-          setState(() => device.setStatus(Status.offline));
-          ShowNotification().scheduleNotifications(device);
+          setState(() { 
+          device.setStatus(Status.offline);
+          notification.scheduleNotifications(device);
+          });
         }
       }
     }).asFuture();
@@ -83,20 +88,22 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         if (response.statusCode != 200) {
           setState(() => device.setStatus(Status.offline));
-          ShowNotification().scheduleNotifications(device);
+          notification.scheduleNotifications(device);
         }else{
           final data = jsonDecode(response.body);
           Duration diff = getDifferenceTime(data['time'] as int);
           if (diff.inSeconds > 60) {
             setState(() => device.setStatus(Status.lowOnline));
+            notification.closeNotification();
           }else {
             setState(() => device.setStatus(Status.online));
+            notification.closeNotification();
           }
         }
       } catch(_) {
         if (!mounted) return;
         setState(() => device.setStatus(Status.offline));
-        ShowNotification().scheduleNotifications(device);
+        notification.scheduleNotifications(device);
       }      
   }
 

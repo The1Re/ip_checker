@@ -4,11 +4,12 @@ import 'package:ip_checker/model/device.dart';
 
 
 class ShowNotification {
-
+Timer? _timer;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     // Initialize native android notification
+    
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -28,7 +29,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('channel_id', 'Channel Name',
             channelDescription: 'Channel Description',
-            importance: Importance.max,
+            importance: Importance.min,
             priority: Priority.high,
             ticker: 'ticker');
 
@@ -42,12 +43,14 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 
 
   void scheduleNotifications(Device device) {
-  Timer.periodic(Duration(seconds: 30), (Timer timer) {
-    showNotificationAndroid("Your ${device.name} is down","Your ${device.name} is currently not working. Please check your device."); // Alert when status is offline.....
-  });
+    _timer = Timer(const Duration(seconds: 20), () {
+      showNotificationAndroid("Your ${device.name} is down","Your ${device.name} is currently not working. Please check your device."); // Alert when status is offline.....
+    });
   }
 
-  Future<void> closeNotification(int noti_id) async {
-    await flutterLocalNotificationsPlugin.cancel(noti_id);
+  Future<void> closeNotification() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+     _timer?.cancel();
+     _timer = null;
   }
 }
