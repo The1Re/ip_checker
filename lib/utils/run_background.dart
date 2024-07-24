@@ -1,9 +1,7 @@
 import 'dart:isolate';
-import 'package:ip_checker/utils/show_notification.dart';
-
 
 class RunBackground {
-  ReceivePort _port = ReceivePort();
+  final ReceivePort _port = ReceivePort();
 
   void startBackgroundTask() async {
     await Isolate.spawn(backgroundTask, _port.sendPort);

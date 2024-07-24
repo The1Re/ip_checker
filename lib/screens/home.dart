@@ -62,8 +62,12 @@ class _HomePageState extends State<HomePage> {
     final subsciption = ping.stream.listen((event) {
       if (!mounted) return;
       if (event.response == null) {
-        setState(() => event.summary?.received != 0 ? device.setStatus(Status.online) : device.setStatus(Status.offline));
-        ShowNotification().scheduleNotifications(device);
+        if (event.summary?.received != 0) {
+          setState(() => device.setStatus(Status.online));
+        }else{
+          setState(() => device.setStatus(Status.offline));
+          ShowNotification().showNotification(device);
+        }
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
@@ -74,9 +78,11 @@ class _HomePageState extends State<HomePage> {
         http.Response response = await http.get(
             Uri.parse("https://${device.ip}"),
             headers: {"Accept": "application/json"}
-          ).timeout(const Duration(minutes: 5));
+          ).timeout(const Duration(minutes: 3));
+        if (!mounted) return;
         if (response.statusCode != 200) {
           setState(() => device.setStatus(Status.offline));
+          ShowNotification().showNotification(device);
         }else{
           final data = jsonDecode(response.body);
           Duration diff = getDifferenceTime(data['time'] as int);
@@ -86,9 +92,10 @@ class _HomePageState extends State<HomePage> {
             setState(() => device.setStatus(Status.online));
           }
         }
-      } on TimeoutException catch(_) {
+      } catch(_) {
+        if (!mounted) return;
         setState(() => device.setStatus(Status.offline));
-        ShowNotification().scheduleNotifications(device);
+        ShowNotification().showNotification(device);
       }      
   }
 
