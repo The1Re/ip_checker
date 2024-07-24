@@ -40,9 +40,14 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
         .show(notification_id, title, value, notificationDetails, payload: 'Not present');
   }
 
-  void showNotification(Device device) {
-    print('send noti ${device.name}');
-    showNotificationAndroid("Your ${device.name} is down", "Your ${device.name} is currently not working. Please check your device.");
+
+  void scheduleNotifications(Device device) {
+  Timer.periodic(Duration(seconds: 30), (Timer timer) {
+    showNotificationAndroid("Your ${device.name} is down","Your ${device.name} is currently not working. Please check your device."); // Alert when status is offline.....
+  });
   }
 
+  Future<void> closeNotification(int noti_id) async {
+    await flutterLocalNotificationsPlugin.cancel(noti_id);
+  }
 }

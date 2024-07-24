@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       //start program
       pingAll(_filteredDevices);
       //schedule ping every 5 minute
-      Timer.periodic(const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
+      Timer.periodic(const Duration(seconds: 60), (Timer t) => pingAll(_filteredDevices));
     });
   }
 
@@ -64,9 +64,10 @@ class _HomePageState extends State<HomePage> {
       if (event.response == null) {
         if (event.summary?.received != 0) {
           setState(() => device.setStatus(Status.online));
+          ShowNotification().closeNotification(1);
         }else{
           setState(() => device.setStatus(Status.offline));
-          ShowNotification().showNotification(device);
+          ShowNotification().scheduleNotifications(device);
         }
       }
     }).asFuture();
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         if (response.statusCode != 200) {
           setState(() => device.setStatus(Status.offline));
-          ShowNotification().showNotification(device);
+          ShowNotification().scheduleNotifications(device);
         }else{
           final data = jsonDecode(response.body);
           Duration diff = getDifferenceTime(data['time'] as int);
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage> {
       } catch(_) {
         if (!mounted) return;
         setState(() => device.setStatus(Status.offline));
-        ShowNotification().showNotification(device);
+        ShowNotification().scheduleNotifications(device);
       }      
   }
 

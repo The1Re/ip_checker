@@ -32,7 +32,7 @@ class _EditDeviceState extends State<EditDevice> {
   void edit() async {
     if (nameDevice.textController.text != "" &&
         ipAddress.textController.text != "") {
-      if (await SQLiteHelper().isExist(nameDevice.textController.text)) {
+      if (await SQLiteHelper().isExist(nameDevice.textController.text) && nameDevice.textController.text != widget.device.name) {
         showDialog(
           context: context,
           builder: (context) {
