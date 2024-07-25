@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingWithICMP(Device device) async {
+    int deviceIdx = _filteredDevices.indexWhere((item) => item.name == device.name);
     final ping = Ping(
       device.ip, 
       count: 1,
@@ -61,19 +62,26 @@ class _HomePageState extends State<HomePage> {
     );
     final subsciption = ping.stream.listen((event) {
       if (!mounted) return;
-      if (event.response == null) {
-        if (event.summary?.received != 0) {
-          setState(() => device.setStatus(Status.online));
-        }else{
-          setState(() => device.setStatus(Status.offline));
-          ShowNotification().showNotification(device);
+      if (event.error == null) {
+        if (event.response == null) {
+          if (event.summary?.received != 0) {
+            setState(() => device.setStatus(Status.online));
+            ShowNotification().closeNotification(deviceIdx);
+          }else{
+            setState(() => device.setStatus(Status.offline));
+            ShowNotification().showNotification(device, deviceIdx);
+          }
         }
+      }else{
+        setState(() => device.setStatus(Status.offline));
+        ShowNotification().showNotification(device, deviceIdx);
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
   }
 
   Future<void> pingWithHTTP(Device device) async {
+      int deviceIdx = _filteredDevices.indexWhere((item) => item.name == device.name);
       try {
         http.Response response = await http.get(
             Uri.parse("https://${device.ip}"),
@@ -82,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         if (response.statusCode != 200) {
           setState(() => device.setStatus(Status.offline));
-          ShowNotification().showNotification(device);
+          ShowNotification().showNotification(device, deviceIdx);
         }else{
           final data = jsonDecode(response.body);
           Duration diff = getDifferenceTime(data['time'] as int);
@@ -91,11 +99,12 @@ class _HomePageState extends State<HomePage> {
           }else {
             setState(() => device.setStatus(Status.online));
           }
+          ShowNotification().closeNotification(deviceIdx);
         }
       } catch(_) {
         if (!mounted) return;
         setState(() => device.setStatus(Status.offline));
-        ShowNotification().showNotification(device);
+        ShowNotification().showNotification(device, deviceIdx);
       }      
   }
 

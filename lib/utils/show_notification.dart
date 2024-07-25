@@ -24,7 +24,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 
   }
 
-  void showNotificationAndroid(String title, String value) async {
+  void showNotificationAndroid(String title, String value, int noti_id) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('channel_id', 'Channel Name',
             channelDescription: 'Channel Description',
@@ -32,17 +32,20 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
             priority: Priority.high,
             ticker: 'ticker');
 
-    int notification_id = 1;
+    int notificationId = noti_id;
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
 
     await flutterLocalNotificationsPlugin
-        .show(notification_id, title, value, notificationDetails, payload: 'Not present');
+        .show(notificationId, title, value, notificationDetails, payload: 'Not present');
   }
 
-  void showNotification(Device device) {
-    print('send noti ${device.name}');
-    showNotificationAndroid("Your ${device.name} is down", "Your ${device.name} is currently not working. Please check your device.");
+  void showNotification(Device device, int id) {
+    showNotificationAndroid("[ ${device.name} ] is down", "[ ${device.ip} ] is currently not working. Please check your device.", id);
+  }
+
+  Future<void> closeNotification(int notiId) async {
+    await flutterLocalNotificationsPlugin.cancel(notiId);
   }
 
 }
