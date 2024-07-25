@@ -141,7 +141,7 @@ class _AddDeviceState extends State<AddDevice> {
 
           //Type Button
           Container(
-            padding: const EdgeInsets.only(top: 20,bottom: 20),
+            padding: const EdgeInsets.only(top: 10,bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

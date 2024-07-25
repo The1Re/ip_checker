@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     //fetch data
     super.initState();
-    RunBackground().startBackgroundTask();
+    //RunBackground().startBackgroundTask();
     notification.init();
     fetchData().then((onValue) {
       //start program
@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingWithICMP(Device device) async {
+    int deviceIndex = _filteredDevices.indexWhere((item) => item.name == device.name);
     final ping = Ping(
       device.ip, 
       count: 1,
@@ -64,15 +65,13 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       if (event.response == null) {
         if (event.summary?.received != 0) {
-          setState(() { 
-          device.setStatus(Status.online);
-          notification.closeNotification();
-          });
+          setState(() => device.setStatus(Status.online));
+          notification.closeNotification(deviceIndex);
+          print("online ${deviceIndex}");
         }else{
-          setState(() { 
-          device.setStatus(Status.offline);
-          notification.scheduleNotifications(device);
-          });
+          setState(() => device.setStatus(Status.offline));
+          notification.scheduleNotifications(device,deviceIndex);
+          print("offline ${deviceIndex}");
         }
       }
     }).asFuture();
@@ -80,6 +79,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingWithHTTP(Device device) async {
+    int deviceIndex = _filteredDevices.indexWhere((item) => item.name == device.name);
       try {
         http.Response response = await http.get(
             Uri.parse("https://${device.ip}"),
@@ -88,22 +88,22 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         if (response.statusCode != 200) {
           setState(() => device.setStatus(Status.offline));
-          notification.scheduleNotifications(device);
+          notification.scheduleNotifications(device,deviceIndex);
         }else{
           final data = jsonDecode(response.body);
           Duration diff = getDifferenceTime(data['time'] as int);
           if (diff.inSeconds > 60) {
             setState(() => device.setStatus(Status.lowOnline));
-            notification.closeNotification();
+            notification.closeNotification(deviceIndex);
           }else {
             setState(() => device.setStatus(Status.online));
-            notification.closeNotification();
+            notification.closeNotification(deviceIndex);
           }
         }
       } catch(_) {
         if (!mounted) return;
         setState(() => device.setStatus(Status.offline));
-        notification.scheduleNotifications(device);
+        notification.scheduleNotifications(device,deviceIndex);
       }      
   }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 class RunBackground {
@@ -7,6 +8,7 @@ class RunBackground {
     await Isolate.spawn(backgroundTask, _port.sendPort);
     _port.listen((message) {
       // Handle background task completion
+      Timer(Duration(seconds: 15), () => print("still run"),);
       print('Background task completed: $message');
     });
   }

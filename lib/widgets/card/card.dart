@@ -124,7 +124,7 @@ class _CardDeviceState extends State<CardDevice> {
                       // <----Ip address here---->
                       Text(widget.device.ip,
                           style: const TextStyle(
-                              fontSize: 20, color: Colors.grey)),
+                              fontSize: 15, color: Colors.grey)),
                     ],
                   ),
                   //Date & LastOffline & Type
@@ -142,15 +142,15 @@ class _CardDeviceState extends State<CardDevice> {
                               Text(
                                   "Date add: ${DateFormat.yMMMd().format(widget.device.dateAdd)}",
                                   style: const TextStyle(
-                                      fontSize: 15, color: Colors.grey)),
+                                      fontSize: 12, color: Colors.grey)),
                               Text(
                                   "Last offline: ${DateFormat.yMMMd().format(widget.device.dateAdd)}",
                                   style: const TextStyle(
-                                      fontSize: 15, color: Colors.grey)),
+                                      fontSize: 12, color: Colors.grey)),
                               Text(
                                   "Type: ${widget.device.type.name.toUpperCase()}",
                                   style: const TextStyle(
-                                      fontSize: 15, color: Colors.grey)),
+                                      fontSize: 12, color: Colors.grey)),
                             ],
                           ),
                         ),
@@ -159,9 +159,9 @@ class _CardDeviceState extends State<CardDevice> {
               ),
             ),
             Container(
-                padding: const EdgeInsets.only(left: 25),
+                padding: EdgeInsets.zero,
                 margin: EdgeInsets.zero,
-                width: MediaQuery.of(context).size.height * 0.2,
+                width: MediaQuery.of(context).size.height * 0.19,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -197,7 +197,7 @@ class _CardDeviceState extends State<CardDevice> {
                                   },
                                   child: const Icon(
                                     Icons.edit,
-                                    size: 20,
+                                    size: 15,
                                   ),
                                 ),
                                 FilledButton(
@@ -215,7 +215,7 @@ class _CardDeviceState extends State<CardDevice> {
                                     "X",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20),
+                                        fontSize: 15),
                                   ),
                                 ),
                               ],
