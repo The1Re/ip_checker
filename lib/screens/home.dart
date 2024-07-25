@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/add_device.dart';
 import 'package:ip_checker/utils/run_background.dart';
@@ -14,7 +17,7 @@ import 'package:flutter_icmp_ping/flutter_icmp_ping.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
+  
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -24,12 +27,14 @@ class _HomePageState extends State<HomePage> {
   List<Device> _filteredDevices = [];
   final List<StreamSubscription<void>> _subsciptions = []; //store streamInput when change page cancel it
   final ShowNotification notification = ShowNotification();
-
+  String debug = "";
+  String debug2 = "";
+  int count = 0;
+  final service = FlutterBackgroundService();
   @override
   void initState() {
     //fetch data
     super.initState();
-    //RunBackground().startBackgroundTask();
     notification.init();
     fetchData().then((onValue) {
       //start program
@@ -37,6 +42,7 @@ class _HomePageState extends State<HomePage> {
       //schedule ping every 5 minute
       Timer.periodic(const Duration(seconds: 30), (Timer t) => pingAll(_filteredDevices));
     });
+    service.startService();
   }
 
   @override
@@ -48,6 +54,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingAll(List<Device> devices) async {
+    setState(() => count++);
     for (var device in devices) {
       device.type == Type.icmp ?  await pingWithICMP(device) : await pingWithHTTP(device);
     }
@@ -62,17 +69,24 @@ class _HomePageState extends State<HomePage> {
       ipv6: false,
     );
     final subsciption = ping.stream.listen((event) {
+      // print(device.name);
+      // print(event);
       if (!mounted) return;
-      if (event.response == null) {
-        if (event.summary?.received != 0) {
-          setState(() => device.setStatus(Status.online));
-          notification.closeNotification(deviceIndex);
-          print("online ${deviceIndex}");
-        }else{
-          setState(() => device.setStatus(Status.offline));
-          notification.scheduleNotifications(device,deviceIndex);
-          print("offline ${deviceIndex}");
+      if(event.error == null){
+          if (event.response == null) {
+            if (event.summary?.received != 0) {
+              setState(() => device.setStatus(Status.online));
+              notification.closeNotification(deviceIndex);
+              //rint("online ${deviceIndex}");
+            }else{
+              setState(() => device.setStatus(Status.offline));
+              notification.scheduleNotifications(device,deviceIndex);
+              //print("offline ${deviceIndex}");
+            }
         }
+      }else{
+        setState(() => device.setStatus(Status.offline));
+        notification.scheduleNotifications(device,deviceIndex);
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
@@ -134,9 +148,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          "My Device",
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+        title: Text(
+          "$count : $debug2",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       backgroundColor: Colors.white,
@@ -148,13 +162,13 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.only(left: 5),
               //margin: EdgeInsets.zero,
               width: 400,
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    "Check the condition of the equipment.",
+                    "$debug",
                     style: TextStyle(
-                        fontSize: 20, color: Color.fromARGB(255, 80, 80, 80)),
+                        fontSize: 9, color: Color.fromARGB(255, 80, 80, 80)),
                   )
                 ],
               ),
@@ -184,9 +198,11 @@ class _HomePageState extends State<HomePage> {
                 ]
               ),
             ),
+            
           ],
         ),
       ),
+      
       floatingActionButton: FloatingActionButton.extended(
         shape: const CircleBorder(),
         backgroundColor: const Color.fromRGBO(101, 138, 190, 100),

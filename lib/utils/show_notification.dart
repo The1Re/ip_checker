@@ -4,7 +4,7 @@ import 'package:ip_checker/model/device.dart';
 
 
 class ShowNotification {
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     // Initialize native android notification

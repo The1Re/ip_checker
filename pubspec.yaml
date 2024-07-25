@@ -41,6 +41,13 @@ dependencies:
   http: ^1.2.2
   flutter_icmp_ping: ^3.1.3
   flutter_local_notifications: ^17.2.1+2
+  flutter_background: ^1.2.0
+  flutter_background_service: ^5.0.6
+  flutter_background_service_android: ^6.2.3
+  permission_handler: ^11.3.1
+  flutter_foreground_service: ^0.4.1
+  shared_preferences: ^2.2.3
+  device_info_plus: ^9.1.2
 
 dev_dependencies:
   flutter_test:
