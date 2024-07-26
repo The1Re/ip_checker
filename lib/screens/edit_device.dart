@@ -174,9 +174,9 @@ class _EditDeviceState extends State<EditDevice> {
                   children: [
                     Container(
                       padding: const EdgeInsets.only(left: 10),
-                      child: const Text(
-                        "Ip address",
-                        style: TextStyle(
+                      child: Text(
+                        widget.device.type == Type.icmp ? "Ip address" : "Url",
+                        style: const TextStyle(
                             fontSize: 15,
                             color: Color.fromRGBO(37, 37, 37, 0.612)),
                       ),
