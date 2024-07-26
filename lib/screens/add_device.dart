@@ -205,9 +205,9 @@ class _AddDeviceState extends State<AddDevice> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Ip address",
-                                style: TextStyle(
+                              Text(
+                                selectedType == Type.icmp ? "Ip address" : "Url",
+                                style: const TextStyle(
                                     fontSize: 15,
                                     color: Color.fromRGBO(37, 37, 37, 0.612)),
                               ),
