@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ip_checker/model/device.dart';
 import 'package:ip_checker/screens/add_device.dart';
 import 'package:ip_checker/utils/run_background.dart';
@@ -19,22 +22,25 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   List<Device> _devices = [];
   List<Device> _filteredDevices = [];
-  final List<StreamSubscription<void>> _subsciptions = []; //store streamInput when change page cancel it
+  final List<StreamSubscription<void>> _subsciptions =
+      []; //store streamInput when change page cancel it
 
   @override
   void initState() {
-    //fetch data
     super.initState();
-    RunBackground().startBackgroundTask();
+    WidgetsBinding.instance.addObserver(this);
+    //Notification
     ShowNotification().init();
+    //fetch data
     fetchData().then((onValue) {
       //start program
       pingAll(_filteredDevices);
       //schedule ping every 5 minute
-      Timer.periodic(const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
+      Timer.periodic(
+          const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
     });
   }
 
@@ -46,16 +52,39 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    final service = FlutterBackgroundService();
+    var isRunning = await service.isRunning();
+    if (state == AppLifecycleState.inactive) {
+      if (!isRunning) {
+        service.startService();
+      }
+      print("running");
+    } else if (state == AppLifecycleState.detached || state == AppLifecycleState.resumed) {
+      if(isRunning){
+        service.invoke('stopService');
+      }
+      pingAll(_filteredDevices);
+      print("Stop running");
+    }
+  }
+
   Future<void> pingAll(List<Device> devices) async {
     for (var device in devices) {
-      device.type == Type.icmp ?  await pingWithICMP(device) : await pingWithHTTP(device);
+      device.type == Type.icmp
+          ? await pingWithICMP(device)
+          : await pingWithHTTP(device);
     }
   }
 
   Future<void> pingWithICMP(Device device) async {
-    int deviceIdx = _filteredDevices.indexWhere((item) => item.name == device.name);
+    int deviceIdx =
+        _filteredDevices.indexWhere((item) => item.name == device.name);
     final ping = Ping(
-      device.ip, 
+      device.ip,
       count: 1,
       timeout: 5,
       ipv6: false,
@@ -67,12 +96,12 @@ class _HomePageState extends State<HomePage> {
           if (event.summary?.received != 0) {
             setState(() => device.setStatus(Status.online));
             ShowNotification().closeNotification(deviceIdx);
-          }else{
+          } else {
             setState(() => device.setStatus(Status.offline));
             ShowNotification().showNotification(device, deviceIdx);
           }
         }
-      }else{
+      } else {
         setState(() => device.setStatus(Status.offline));
         ShowNotification().showNotification(device, deviceIdx);
       }
@@ -81,38 +110,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> pingWithHTTP(Device device) async {
-      int deviceIdx = _filteredDevices.indexWhere((item) => item.name == device.name);
-      try {
-        http.Response response = await http.get(
-            Uri.parse("https://${device.ip}"),
-            headers: {"Accept": "application/json"}
-          ).timeout(const Duration(minutes: 3));
-        if (!mounted) return;
-        if (response.statusCode != 200) {
-          setState(() => device.setStatus(Status.offline));
-          ShowNotification().showNotification(device, deviceIdx);
-        }else{
-          final data = jsonDecode(response.body);
-          Duration diff = getDifferenceTime(data['time'] as int);
-          if (diff.inSeconds > 60) {
-            setState(() => device.setStatus(Status.lowOnline));
-          }else {
-            setState(() => device.setStatus(Status.online));
-          }
-          ShowNotification().closeNotification(deviceIdx);
-        }
-      } catch(_) {
-        if (!mounted) return;
+    int deviceIdx =
+        _filteredDevices.indexWhere((item) => item.name == device.name);
+    try {
+      http.Response response = await http.get(Uri.parse("https://${device.ip}"),
+          headers: {
+            "Accept": "application/json"
+          }).timeout(const Duration(minutes: 3));
+      if (!mounted) return;
+      if (response.statusCode != 200) {
         setState(() => device.setStatus(Status.offline));
         ShowNotification().showNotification(device, deviceIdx);
-      }      
+      } else {
+        final data = jsonDecode(response.body);
+        Duration diff = getDifferenceTime(data['time'] as int);
+        if (diff.inSeconds > 60) {
+          setState(() => device.setStatus(Status.lowOnline));
+        } else {
+          setState(() => device.setStatus(Status.online));
+        }
+        ShowNotification().closeNotification(deviceIdx);
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => device.setStatus(Status.offline));
+      ShowNotification().showNotification(device, deviceIdx);
+    }
   }
 
   Future<void> fetchData() async {
-    await SQLiteHelper().getDevice().then((deviceList){
+    await SQLiteHelper().getDevice().then((deviceList) {
       setState(() {
         _devices = deviceList;
-        _filteredDevices = deviceList; 
+        _filteredDevices = deviceList;
       });
     });
   }
@@ -162,29 +192,30 @@ class _HomePageState extends State<HomePage> {
             ),
             //search bar
             Container(
-              padding: const EdgeInsets.only(top: 20),
-              alignment: Alignment.center,
-              child: SearchDeviceBar(devices: _devices, callback: updateFilteredDevices)
-            ),
+                padding: const EdgeInsets.only(top: 20),
+                alignment: Alignment.center,
+                child: SearchDeviceBar(
+                    devices: _devices, callback: updateFilteredDevices)),
             //All device
-            _filteredDevices.isNotEmpty ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              margin: const EdgeInsetsDirectional.only(top: 20),
-              height: MediaQuery.of(context).size.height*0.65,
-              child: ListCardDevice(
-                devices: _filteredDevices,
-                deleteDevice: deleteDevice
-              )
-            ) : Container(
-              height: MediaQuery.of(context).size.height*0.65,
-              child:const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[ 
-                Text("No device",style: TextStyle(fontSize: 20,color: Colors.grey),),
-                ]
-              ),
-            ),
+            _filteredDevices.isNotEmpty
+                ? Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    margin: const EdgeInsetsDirectional.only(top: 20),
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    child: ListCardDevice(
+                        devices: _filteredDevices, deleteDevice: deleteDevice))
+                : Container(
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "No device",
+                            style: TextStyle(fontSize: 20, color: Colors.grey),
+                          ),
+                        ]),
+                  ),
           ],
         ),
       ),
@@ -197,9 +228,8 @@ class _HomePageState extends State<HomePage> {
               fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         onPressed: () {
-          Navigator
-            .of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) =>const AddDevice()));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const AddDevice()));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

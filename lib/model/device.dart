@@ -48,7 +48,7 @@ class Device {
     required this.dateAdd,
     required this.lastOffline,
     this.type = Type.icmp,
-    this.status = Status.unknow
+    required this.status,
   });
 
   Map<String, Object?> toMap() {

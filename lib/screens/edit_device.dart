@@ -32,7 +32,7 @@ class _EditDeviceState extends State<EditDevice> {
   void edit() async {
     if (nameDevice.textController.text != "" &&
         ipAddress.textController.text != "") {
-      if (await SQLiteHelper().isExist(nameDevice.textController.text)) {
+      if (await SQLiteHelper().isExist(nameDevice.textController.text) && nameDevice.textController.text != widget.device.name) {
         showDialog(
           context: context,
           builder: (context) {
@@ -71,7 +71,8 @@ class _EditDeviceState extends State<EditDevice> {
                         name: nameDevice.textController.text,
                         ip: ipAddress.textController.text,
                         dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now());
+                        lastOffline: DateTime.now(),
+                        status: Status.unknow);
                     await SQLiteHelper().update(widget.device.name, update);
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => const HomePage()));

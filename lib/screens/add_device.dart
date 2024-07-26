@@ -62,7 +62,8 @@ class _AddDeviceState extends State<AddDevice> {
             ip: ipAddress.textController.text,
             dateAdd: DateTime.now(),
             lastOffline: DateTime.now(),
-            type: selectedType);
+            type: selectedType,
+            status: Status.unknow);
         SQLiteHelper().insert(device);
 
         Navigator.of(context).pushReplacement(
@@ -141,7 +142,7 @@ class _AddDeviceState extends State<AddDevice> {
 
           //Type Button
           Container(
-            padding: const EdgeInsets.only(top: 20,bottom: 20),
+            padding: const EdgeInsets.only(top: 10,bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

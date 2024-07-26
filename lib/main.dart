@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ip_checker/screens/home.dart';
+import 'package:ip_checker/utils/run_background.dart';
 
 class MyHttpOverride extends HttpOverrides {
   @override
@@ -13,6 +14,8 @@ class MyHttpOverride extends HttpOverrides {
 
 void main() async{
   HttpOverrides.global = MyHttpOverride();
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
   runApp(const MyApp());
 }
 
