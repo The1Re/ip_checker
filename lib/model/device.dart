@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:ip_checker/utils/sqlite_helper.dart';
 
 enum Type {
   icmp,
@@ -36,10 +37,17 @@ class Device {
   Status status;
 
   void setStatus(Status status) {
-    this.status = status;
-    if (status == Status.offline) {
+    if (status == Status.offline && this.status == Status.online) {
       lastOffline = DateTime.now(); //fix should update to database
+      Device device = Device(
+        name: name, 
+        ip: ip, 
+        dateAdd: dateAdd, 
+        lastOffline: lastOffline, 
+        status: status);
+      SQLiteHelper().update(name, device);
     }
+    this.status = status;
   }
 
   Device({

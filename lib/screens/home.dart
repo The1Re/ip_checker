@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       pingAll(_filteredDevices);
       //schedule ping every 5 minute
       Timer.periodic(
-          const Duration(minutes: 5), (Timer t) => pingAll(_filteredDevices));
+          const Duration(seconds: 20), (Timer t) => pingAll(_filteredDevices));
     });
   }
 
@@ -62,13 +62,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (!isRunning) {
         service.startService();
       }
-      print("running");
+      print("### running");
     } else if (state == AppLifecycleState.detached || state == AppLifecycleState.resumed) {
       if(isRunning){
         service.invoke('stopService');
       }
       pingAll(_filteredDevices);
-      print("Stop running");
+      print("### Stop running");
     }
   }
 
@@ -107,6 +107,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
+    print("### inApp ${device.name} ${device.status} ${device.lastOffline}");
   }
 
   Future<void> pingWithHTTP(Device device) async {
@@ -136,6 +137,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       setState(() => device.setStatus(Status.offline));
       ShowNotification().showNotification(device, deviceIdx);
     }
+    print("### inApp ${device.name} ${device.status} ${device.lastOffline}");
   }
 
   Future<void> fetchData() async {

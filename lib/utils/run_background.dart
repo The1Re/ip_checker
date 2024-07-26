@@ -64,7 +64,7 @@ void onStart(ServiceInstance service) async {
   Pingonforeground pingonforeground = Pingonforeground(devices: _devices);
 
   // // bring to foreground
-  Timer.periodic(const Duration(seconds: 30), (timer) async {
+  Timer.periodic(const Duration(seconds: 20), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         pingonforeground.pingAll();
@@ -98,37 +98,20 @@ class Pingonforeground {
       if (event.error == null) {
         if (event.response == null) {
           if (event.summary?.received != 0) {//Online
-            Device update = Device(
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.online);
-            await SQLiteHelper().update(device.name, update);
+            device.setStatus(Status.online);
             ShowNotification().closeNotification(deviceIdx);
-          } else {
-            Device update = Device(//Offline
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.offline);
-            await SQLiteHelper().update(device.name, update);
+          } else {//Offline
+            device.setStatus(Status.offline);
             ShowNotification().showNotification(device, deviceIdx);
           }
         }
-      } else {
-        Device update = Device(//Offline
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.offline);
-            await SQLiteHelper().update(device.name, update);
+      } else {//Offline
+        device.setStatus(Status.offline);
         ShowNotification().showNotification(device, deviceIdx);
       }
     }).asFuture();
     _subsciptions.add(subsciption.asStream().listen((event) {}));
+    print("### background ${device.name} ${device.status} ${device.lastOffline}");
   }
 
   Future<void> pingWithHTTP(Device device) async {
@@ -140,45 +123,22 @@ class Pingonforeground {
             "Accept": "application/json"
           }).timeout(const Duration(minutes: 3));
       if (response.statusCode != 200) { //Offline
-        Device update = Device(
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.offline);
-            await SQLiteHelper().update(device.name, update);
+        device.setStatus(Status.offline);
         ShowNotification().showNotification(device, deviceIdx);
       } else {
         final data = jsonDecode(response.body);
         Duration diff = getDifferenceTime(data['time'] as int);
         if (diff.inSeconds > 60) {//Lowonline
-          Device update = Device(
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.lowOnline);
-            await SQLiteHelper().update(device.name, update);
+          device.setStatus(Status.lowOnline);
         } else {//Online
-          Device update = Device(
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.online);
-            await SQLiteHelper().update(device.name, update);
+          device.setStatus(Status.online);
         }
         ShowNotification().closeNotification(deviceIdx);
       }
     } catch (_) {//Offline
-      Device update = Device(
-                        name: device.name,
-                        ip: device.ip,
-                        dateAdd: DateTime.now(),
-                        lastOffline: DateTime.now(),
-                        status: Status.offline);
-            await SQLiteHelper().update(device.name, update);
+      device.setStatus(Status.offline);
       ShowNotification().showNotification(device, deviceIdx);
     }
+    print("### background ${device.name} ${device.status} ${device.lastOffline}");
   }
 }
