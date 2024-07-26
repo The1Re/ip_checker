@@ -141,15 +141,15 @@ class _CardDeviceState extends State<CardDevice> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  "Date add: ${DateFormat('dd/MM/yyyy hh:mm a').format(widget.device.dateAdd)}",
+                                  "Date add: \n    ${DateFormat('dd/MM/yyyy hh:mm a').format(widget.device.dateAdd)}",
                                   style: const TextStyle(
                                       fontSize: 10, color: Colors.grey)),
                               Text(
-                                  "Last offline: ${DateFormat('dd/MM/yyyy hh:mm a').format(widget.device.dateAdd)}",
+                                  "Last offline: \n    ${DateFormat('dd/MM/yyyy hh:mm a').format(widget.device.dateAdd)}",
                                   style: const TextStyle(
                                       fontSize: 10, color: Colors.grey)),
                               Text(
-                                  "Type: ${widget.device.type.name.toUpperCase()}",
+                                  "Type: \n    ${widget.device.type.name.toUpperCase()}",
                                   style: const TextStyle(
                                       fontSize: 10, color: Colors.grey)),
                             ],
